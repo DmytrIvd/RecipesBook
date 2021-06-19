@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CategoryViewModel
+@{
+    ViewData["Title"] = Model.Name;
+    
+}
+<h2>Category @Model.Name</h2>
+<div class="row">
+    @foreach (var item in Model.Recipes)
+    {
+        <div id="recipe-@item.Id" class="card col-3 p-3">
+
+
+            <img class="card-img-top" height="150" width="150">
+            <div class="card-body">
+                <h5 class="card-title">@item.Name</h5>
+                <p class="card-text">@item.Description</p>
+                <a href="/recipes/@item.Id" class="btn btn-primary">View recipe</a>
+            </div>
+        </div>
+    }
+</div>
+<nav class="nav-pagination">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        @for (int i = 0; i < Model.Recipes.Length; i++)
+        {
+            <li class="page-item"><a class="page-link" href="?page=@(i+1)">@(i+1)</a></li>
+        }
+
+
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>

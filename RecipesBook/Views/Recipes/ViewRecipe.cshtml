@@ -1,0 +1,109 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model RecipeViewModel
+@{
+
+    ViewData["Title"] = Model.Name;
+
+}
+<h1 class="text-muted">@Model.Name</h1>
+<h3>@Model.Description</h3>
+
+<img class="img-fluid" width="800" height="600" />
+
+<h5>Categories:</h5>
+<div id="categories" class="my-3">
+    @for (int i = 0; i < Model.Categories.Length; i++)
+    {
+        <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories[i].Id">
+            @Model.Categories[i].Name
+        </a>
+    }
+</div>
+<h5>
+    Necessary ingredients
+</h5>
+
+<div id="ingredients" class="pb-5 px-3">
+    @for (int i = 0; i < Model.Ingredients.Length; i++)
+    {
+        <div class="m-2">
+            <input id="ingredient-@i" type="checkbox" onchange="handleChange(this)">
+            <label for="ingredient-@i">@Model.Ingredients[i]</label>
+        </div>
+    }
+</div>
+<h5>Instruction</h5>
+<div id="steps" class="my-2">
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>loremlorem
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+
+    <p>lorem</p>
+
+    <p>lorem</p>
+
+
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>
+
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>
+    <p>lorem</p>loremloremloremloremlorem
+</div>
+<script>
+    function handleChange(checkbox) {
+        // console.log(checkbox.labels());
+        $("label[for='" + checkbox.id + "'").toggleClass("checked");
+    }
+</script>
+
+
