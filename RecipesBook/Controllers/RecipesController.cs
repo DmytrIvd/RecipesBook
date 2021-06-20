@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RecipesBook.Models;
+using RecipesBook.DataManagers;
+using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,11 @@ namespace RecipesBook.Controllers
 {
     public class RecipesController : Controller
     {
+        private readonly IDataManager<Recipe> _recipeService;
+        public RecipesController(IDataManager<Recipe> recipes)
+        {
+            _recipeService = recipes;
+        }
         public IActionResult Index()
         {
             return View();
@@ -17,7 +23,7 @@ namespace RecipesBook.Controllers
         public IActionResult ViewRecipe([FromRoute] string recipe)
         {
 
-            return View("/Views/Recipes/ViewRecipe.cshtml", new RecipeViewModel()
+            return View("/Views/Recipes/ViewRecipe.cshtml", new Recipe()
             {
                 Name = "Dish" + recipe,
                 Description = "Description" + recipe,
@@ -28,12 +34,12 @@ namespace RecipesBook.Controllers
                                 "4 -4 grams",
                                 "5 -5 grams"
                  },
-                Categories = new CategoryViewModel[]
+                Categories = new Category[]
                 {
-                    new CategoryViewModel(){Id="1",Name="Something1"},
-                    new CategoryViewModel(){Id="2",Name="Something2"},
-                    new CategoryViewModel(){Id="3",Name="Something3"},
-                    new CategoryViewModel(){Id="4",Name="Something4"},
+                    new Category(){Id="1",Name="Something1"},
+                    new Category(){Id="2",Name="Something2"},
+                    new Category(){Id="3",Name="Something3"},
+                    new Category(){Id="4",Name="Something4"},
                 }
             });
         }
