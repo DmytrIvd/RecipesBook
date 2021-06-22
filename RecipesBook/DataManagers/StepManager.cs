@@ -4,41 +4,11 @@ using System.Collections.Generic;
 
 namespace RecipesBook.DataManagers
 {
-    public class StepManager : IDataManager<Step>
+    public class StepManager : AbsractDataManager<Step>
     {
-        public void Create(Step entity)
+        protected override void Seed()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool Delete(object key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Edit(object key, Step editedEntity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Step Get(Predicate<Step> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Step Get(object key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<Step> GetEntities(Predicate<Step> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<Recipe> GetEntities()
-        {
-            throw new NotImplementedException();
+           
         }
     }
 }

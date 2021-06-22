@@ -5,19 +5,22 @@ using System.Threading.Tasks;
 
 namespace RecipesBook.Models.Entities
 {
-    public class Recipe
+    public class Recipe : IEntity
     {
         public string Id { get; set; }
+
+        public string ID => Id;
+
         public string Name { get; set; }
         public string Description { get; set; }
         public string[] Ingredients { get; set; }
         public byte[] MainImage { get; set; }
-       
+
         public Step[] Steps { get; set; }
 
         public Category[] Categories { get; set; }
 
-        public User[] UserThatLiked { get; set; }
+        public User[] UsersThatLiked { get; set; }
 
         public override bool Equals(object obj)
         {

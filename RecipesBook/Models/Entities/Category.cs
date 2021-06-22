@@ -2,9 +2,13 @@
 
 namespace RecipesBook.Models.Entities
 {
-    public class Category
+    public class Category : IEntity
     {
+
         public string Id { get; set; }
+
+        public string ID => Id;
+
         public string Name { get; set; }
         public string Description { get; set; }
 

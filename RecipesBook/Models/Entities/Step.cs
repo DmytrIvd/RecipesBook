@@ -2,9 +2,12 @@
 
 namespace RecipesBook.Models.Entities
 {
-    public class Step
+    public class Step : IEntity
     {
         public string Id { get; set; }
+
+        public string ID => Id;
+
         public string Text { get; set; }
         public byte[] Img { get; set; }
         public Recipe Recipe { get; set; }

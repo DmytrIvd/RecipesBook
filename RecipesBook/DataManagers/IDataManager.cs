@@ -14,6 +14,6 @@ namespace RecipesBook.DataManagers
         T Get(Predicate<T> predicate);
         T Get(object key);
         IList<T> GetEntities(Predicate<T> predicate);
-        IList<Recipe> GetEntities();
+        IList<T> GetEntities();
     }
 }

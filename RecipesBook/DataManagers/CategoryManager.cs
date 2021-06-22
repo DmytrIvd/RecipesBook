@@ -1,44 +1,31 @@
 ﻿using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RecipesBook.DataManagers
 {
-    public class CategoryManager : IDataManager<Category>
+    public class CategoryManager : AbsractDataManager<Category>
     {
-        public void Create(Category entity)
-        {
-            throw new NotImplementedException();
-        }
+        //public override Category Get(Predicate<Category> predicate)
+        //{
+        //   return this.Entities.SingleOrDefault(e=>predicate.Invoke(e));
+        //}
 
-        public bool Delete(object key)
-        {
-            throw new NotImplementedException();
-        }
+        //public override IList<Category> GetEntities(Predicate<Category> predicate)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public bool Edit(object key, Category editedEntity)
-        {
-            throw new NotImplementedException();
-        }
+        //public override IList<Category> GetEntities()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Category Get(object key)
+        protected override void Seed()
         {
-            throw new NotImplementedException();
-        }
+            
 
-        public Category Get(Predicate<Category> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<Category> GetEntities(Predicate<Category> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<Recipe> GetEntities()
-        {
-            throw new NotImplementedException();
         }
     }
 }

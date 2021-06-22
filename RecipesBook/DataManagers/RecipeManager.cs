@@ -5,69 +5,134 @@ using System.Linq;
 
 namespace RecipesBook.DataManagers
 {
-    public class RecipeManager : IDataManager<Recipe>
+    public class RecipeManager : AbsractDataManager<Recipe>
     {
         private readonly IDataManager<Category> _categoryService;
         private readonly IDataManager<Step> _stepsService;
-        private IList<Recipe> _recipes;
-        public RecipeManager(IDataManager<Category> categoryDataManager, IDataManager<Step> stepDataManager)
+
+        public RecipeManager(IDataManager<Category> categoryDataManager, IDataManager<Step> stepDataManager) : base()
         {
             _categoryService = categoryDataManager;
             _stepsService = stepDataManager;
-            _recipes = new List<Recipe>();
-        }
-        public void Create(Recipe entity)
-        {
-            _recipes.Add(entity);
+
         }
 
-        public bool Delete(object key)
+        public override Recipe Get(Predicate<Recipe> predicate)
         {
-            return _recipes.Remove(new Recipe() { Id = key.ToString() });
-            //_recipes.RemoveAt(_recipes.ToList().FindIndex(r => r.Id));
-        }
-
-        public bool Edit(object key, Recipe editedEntity)
-        {
-            var r = _recipes.SingleOrDefault(r => r.Id.Equals(key));
-            if (r != default)
+           var e= base.Get(predicate);
+            if (e != null)
             {
-                //Change
-                r = editedEntity;
+
             }
-            return false;
+            return e;
         }
 
 
-        public Recipe Get(object key)
+
+        public override IList<Recipe> GetEntities()
         {
-            var r = _recipes.SingleOrDefault(r => r.Id.Equals(key));
-            if (r != default)
+            return base.GetEntities();
+        }
+        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate)
+        {
+            return base.GetEntities();
+            //return Entities.Where(x => predicate.Invoke(x)).ToList();
+        }
+
+
+
+        protected override void Seed()
+        {
+            Entities.Add(new Recipe()
             {
-                for (int i = 0; i < r.Categories.Length; i++)
-                {
-                    r.Categories[0] = _categoryService.Get(r.Categories[0].Id);
-                }
-                for (int i = 0; i < r.Steps.Length; i++)
-                {
-                    r.Steps[0] = _stepsService.Get(r.Steps[0].Id);
-                }
-            }
-            return r;
-        }
+                Name = "Apple bisquid",
+                Description = "Yeah",
+                Id = "1",
+                Ingredients = new string[] { "copper-30gramm" },
+                Categories = new Category[] {
+                    new Category() { Id="1" },
+                    new Category() { Id = "2" },
+                    new Category() { Id = "3" },
+                    new Category() { Id = "4" },
+                    new Category() { Id = "5" }
 
-        public Recipe Get(Predicate<Recipe> predicate)
-        {
-            return _recipes.SingleOrDefault(x => predicate.Invoke(x));
-        }
+                },
+                UsersThatLiked = new User[] { },
+                Steps = new Step[] { },
+                MainImage = null
+            });
+            Entities.Add(new Recipe()
+            {
+                Name = "Apple blossom",
+                Description = "Yeah",
+                Id = "2",
+                Ingredients = new string[] { "copper-30gramm" },
+                Categories = new Category[] {
+                    new Category() { Id="1" },
+                    new Category() { Id = "2" },
+                    new Category() { Id = "3" },
+                    new Category() { Id = "4" },
+                    new Category() { Id = "5" }
 
-        public IList<Recipe> GetEntities()
-        {
-            return _recipes.ToList();
-        }
-        public IList<Recipe> GetEntities(Predicate<Recipe> predicate)
-        {
-            return _recipes.Where(x => predicate.Invoke(x)).ToList();
+                },
+                UsersThatLiked = new User[] { },
+                Steps = new Step[] { },
+                MainImage = null
+            });
+            Entities.Add(new Recipe()
+            {
+                Name = "Apple from apple",
+                Description = "Yeah",
+                Id = "3",
+                Ingredients = new string[] { "copper-30gramm" },
+                Categories = new Category[] {
+                    new Category() { Id="1" },
+                    new Category() { Id = "2" },
+                    new Category() { Id = "3" },
+                    new Category() { Id = "4" },
+                    new Category() { Id = "5" }
+
+                },
+                UsersThatLiked = new User[] { },
+                Steps = new Step[] { },
+                MainImage = null
+            });
+            Entities.Add(new Recipe()
+            {
+                Name = "Apple dydy",
+                Description = "Yeah",
+                Id = "4",
+                Ingredients = new string[] { "copper-30gramm" },
+                Categories = new Category[] {
+                    new Category() { Id="1" },
+                    new Category() { Id = "2" },
+                    new Category() { Id = "3" },
+                    new Category() { Id = "4" },
+                    new Category() { Id = "5" }
+
+                },
+                UsersThatLiked = new User[] { },
+                Steps = new Step[] { },
+                MainImage = null
+            });
+            Entities.Add(new Recipe()
+            {
+                Name = "Apple trish",
+                Description = "Yeah",
+                Id = "5",
+                Ingredients = new string[] { "copper-30gramm" },
+                Categories = new Category[] {
+                    new Category() { Id="1" },
+                    new Category() { Id = "2" },
+                    new Category() { Id = "3" },
+                    new Category() { Id = "4" },
+                    new Category() { Id = "5" }
+
+                },
+                UsersThatLiked = new User[] { },
+                Steps = new Step[] { },
+                MainImage = null
+            });
         }
     }
 }

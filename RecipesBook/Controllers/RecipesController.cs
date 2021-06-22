@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RecipesBook.DataManagers;
+using RecipesBook.Models;
 using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,29 +20,40 @@ namespace RecipesBook.Controllers
         {
             return View();
         }
+        public IActionResult ViewRecipes([FromQuery] string[] category, [FromQuery] string name)
+
+        {
+            Predicate<Recipe> predicate = new Predicate<Recipe>(
+                r =>
+                (
+                    category == null
+                            ||
+                    category.All(
+                       c => r.Categories.Any(cat => cat.ID == c))
+                )
+                &&
+                (
+                    name == null
+                    ||
+                    r.Name.Contains(name)
+                )
+                );
+
+            
+            return View();
+        }
         [Route("recipes/{recipe}")]
         public IActionResult ViewRecipe([FromRoute] string recipe)
         {
-
-            return View("/Views/Recipes/ViewRecipe.cshtml", new Recipe()
+            var rec = _recipeService.Get(recipe);
+            if (rec == null)
             {
-                Name = "Dish" + recipe,
-                Description = "Description" + recipe,
-                Ingredients = new string[] {
-                                "1-1 gram",
-                                "2 -2 grams",
-                                "3 -3 grams",
-                                "4 -4 grams",
-                                "5 -5 grams"
-                 },
-                Categories = new Category[]
-                {
-                    new Category(){Id="1",Name="Something1"},
-                    new Category(){Id="2",Name="Something2"},
-                    new Category(){Id="3",Name="Something3"},
-                    new Category(){Id="4",Name="Something4"},
-                }
-            });
+                Response.StatusCode = 404;
+                return View("Error", new ErrorViewModel() { Message = "It seems this recipe does not exist (yet or already)" });
+            }
+            return View("/Views/Recipes/ViewRecipe.cshtml",
+               rec
+                );
         }
     }
 }
