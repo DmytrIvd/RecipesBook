@@ -96,10 +96,10 @@ body {
 }
 .nav-pagination {
     
-    position: absolute;
-    bottom: 60px;
+   /* position: absolute;
+    bottom: 40px;
     white-space: nowrap;
-    line-height: 60px;
+    line-height: 60px;*/
 }
 .checked {
     text-decoration: line-through;

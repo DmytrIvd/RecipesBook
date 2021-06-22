@@ -16,26 +16,69 @@ namespace RecipesBook.DataManagers
             _stepsService = stepDataManager;
 
         }
-
-        public override Recipe Get(Predicate<Recipe> predicate)
+        protected virtual void LoadCategoryReferences(Recipe recipe)
         {
-           var e= base.Get(predicate);
-            if (e != null)
+
+            if (recipe != null && recipe.Categories != null)
+            {
+                for (int i = 0; i < recipe.Categories.Length; i++)
+                {
+                    recipe.Categories[i] = _categoryService.Get(recipe.Categories[i].ID);
+                }
+            }
+        }
+        protected virtual void LoadStepsReferences(Recipe recipe)
+        {
+            if (recipe != null && recipe.Steps != null)
+            {
+                for (int i = 0; i < recipe.Steps.Length; i++)
+                {
+                    recipe.Steps[i] = _stepsService.Get(recipe.Steps[i].ID);
+                }
+            }
+        }
+        public override Recipe Get(object key, bool loadReferences = false)
+        {
+            var recipe = base.Get(key);
+            if (loadReferences)
             {
 
+                LoadCategoryReferences(recipe);
+            }
+            return recipe;
+        }
+        public override Recipe Get(Predicate<Recipe> predicate, bool loadReferences = false)
+        {
+            var e = base.Get(predicate);
+            if (loadReferences)
+            {
+                LoadCategoryReferences(e);
             }
             return e;
         }
-
-
-
-        public override IList<Recipe> GetEntities()
+        public override IList<Recipe> GetEntities(bool loadReferences = false)
         {
-            return base.GetEntities();
+            var entities = base.GetEntities();
+            if (loadReferences)
+            {
+                foreach(var e in entities)
+                {
+                    LoadCategoryReferences(e);
+                }
+            }
+            return entities;
         }
-        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate)
+        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate, bool loadReferences = false)
         {
-            return base.GetEntities();
+            var entities = base.GetEntities();
+            if (loadReferences)
+            {
+                foreach (var e in entities)
+                {
+                    LoadCategoryReferences(e);
+                }
+            }
+            return entities;
             //return Entities.Where(x => predicate.Invoke(x)).ToList();
         }
 

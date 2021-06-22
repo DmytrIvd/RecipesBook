@@ -21,7 +21,6 @@ namespace RecipesBook.Controllers
             return View();
         }
         public IActionResult ViewRecipes([FromQuery] string[] category, [FromQuery] string name)
-
         {
             Predicate<Recipe> predicate = new Predicate<Recipe>(
                 r =>
@@ -45,7 +44,7 @@ namespace RecipesBook.Controllers
         [Route("recipes/{recipe}")]
         public IActionResult ViewRecipe([FromRoute] string recipe)
         {
-            var rec = _recipeService.Get(recipe);
+            var rec = _recipeService.Get(recipe, loadReferences: true) ;
             if (rec == null)
             {
                 Response.StatusCode = 404;

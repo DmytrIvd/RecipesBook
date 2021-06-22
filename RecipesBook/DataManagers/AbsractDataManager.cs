@@ -14,7 +14,7 @@ namespace RecipesBook.DataManagers
         {
             Entities = new List<T>();
             Seed();
-           
+
         }
         /// <summary>
         /// Will be called in constructor, set up fake data here!
@@ -48,26 +48,26 @@ namespace RecipesBook.DataManagers
             return false;
         }
 
-        public virtual T Get(Predicate<T> predicate)
+        public virtual T Get(Predicate<T> predicate, bool loadReferences = false)
         {
             return Entities.SingleOrDefault(e => predicate.Invoke(e));
         }
 
-        public virtual T Get(object key)
+        public virtual T Get(object key, bool loadReferences = false)
         {
             return Entities.SingleOrDefault(e => e.ID == key.ToString());
         }
 
-        public virtual IList<T> GetEntities(Predicate<T> predicate)
+        public virtual IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false)
         {
-           return Entities.Where(e => predicate.Invoke(e)).ToList();
+            return Entities.Where(e => predicate.Invoke(e)).ToList();
         }
 
-        public virtual IList<T> GetEntities()
+        public virtual IList<T> GetEntities(bool loadReferences = false)
         {
             return Entities;
         }
 
-       
+
     }
 }

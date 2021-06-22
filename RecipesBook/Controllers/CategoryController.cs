@@ -12,10 +12,12 @@ namespace RecipesBook.Controllers
     public class CategoryController : Controller
     {
         private readonly IDataManager<Category> _categoryService;
+        private readonly IDataManager<Recipe> _recipeService;
 
-        public CategoryController(IDataManager<Category> categories)
+        public CategoryController(IDataManager<Category> categories, IDataManager<Recipe> recipes)
         {
             _categoryService = categories;
+            _recipeService = recipes;
         }
         public IActionResult Index()
         {
@@ -25,19 +27,20 @@ namespace RecipesBook.Controllers
         [Route("category/{category}")]
         public IActionResult ViewCategory([FromRoute] string category)
         {
+            var cat = _categoryService.Get(category, loadReferences: true);
+           
+            if (cat == null)
+            {
+                Response.StatusCode = 404;
+                return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
+
+            }
+            for (int i = 0; i < cat.Recipes.Length; i++)
+            {
+                cat.Recipes[i] = _recipeService.Get(cat.Recipes[i].ID);
+            }
             return View("/Views/Category/ViewCategory.cshtml",
-                new Category()
-                {
-                    Name = "Category" + category,
-                    Description = "Description" + category,
-                    Id = category,
-                    Recipes = new Recipe[]
-                    {
-                        new Recipe(){Name="Recipe1",Id="1" },
-                        new Recipe(){Name="Recipe2",Id="2" },
-                        new Recipe(){Name="Recipe3",Id="3" },
-                    }
-                });
+              cat); ;
         }
     }
 }

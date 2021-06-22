@@ -11,9 +11,9 @@ namespace RecipesBook.DataManagers
         void Create(T entity);
         bool Edit(object key, T editedEntity);
         bool Delete(object key);
-        T Get(Predicate<T> predicate);
-        T Get(object key);
-        IList<T> GetEntities(Predicate<T> predicate);
-        IList<T> GetEntities();
+        T Get(Predicate<T> predicate, bool loadReferences = false);
+        T Get(object key, bool loadReferences = false);
+        IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false);
+        IList<T> GetEntities(bool loadReferences = false);
     }
 }
