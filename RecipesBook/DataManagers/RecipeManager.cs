@@ -56,7 +56,7 @@ namespace RecipesBook.DataManagers
             }
             return e;
         }
-        public override IList<Recipe> GetEntities(bool loadReferences = false, Func<Recipe, object> SortPredicate = null)
+        public override IList<Recipe> GetEntities<Parameter>(bool loadReferences = false, Func<Recipe, Parameter> SortPredicate = null)
         {
             var entities = base.GetEntities(loadReferences, SortPredicate);
 
@@ -69,7 +69,7 @@ namespace RecipesBook.DataManagers
             }
             return entities;
         }
-        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate, bool loadReferences = false, Func<Recipe, object> SortPredicate = null)
+        public override IList<Recipe> GetEntities<Parameter>(Predicate<Recipe> predicate, bool loadReferences = false, Func<Recipe, Parameter> SortPredicate = null)
         {
             var entities = base.GetEntities(predicate, loadReferences, SortPredicate);
 
@@ -150,7 +150,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple dydy",
                 Description = "Yeah",
                 Id = "4",
-                DateOfAdd = DateTime.Now,
+                DateOfAdd = new DateTime(1993, 9, 21),
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },

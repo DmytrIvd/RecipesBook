@@ -58,7 +58,7 @@ namespace RecipesBook.DataManagers
             return Entities.SingleOrDefault(e => e.ID == key.ToString());
         }
 
-        public virtual IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false, Func<T, object> SortPredicate = null)
+        public virtual IList<T> GetEntities<Parameter>(Predicate<T> predicate, bool loadReferences = false, Func<T, Parameter> SortPredicate = null)
         {
             var entities = Entities.Where(e => predicate.Invoke(e));
             if (SortPredicate != null)
@@ -68,7 +68,7 @@ namespace RecipesBook.DataManagers
             return entities.ToList();
         }
 
-        public virtual IList<T> GetEntities(bool loadReferences = false, Func<T, object> SortPredicate = null)
+        public virtual IList<T> GetEntities<Parameter>(bool loadReferences = false, Func<T, Parameter> SortPredicate = null)
         {
             if (SortPredicate != null)
             {

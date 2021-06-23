@@ -25,13 +25,13 @@ namespace RecipesBook.DataManagers
 
             return category;
         }
-        public override IList<Category> GetEntities(bool loadReferences = false, Func<Category, object> SortPredicate = null)
+        public override IList<Category> GetEntities<Parameter>(bool loadReferences = false, Func<Category, Parameter> SortPredicate = null)
         {
             var category = base.GetEntities(loadReferences, SortPredicate);
 
             return category;
         }
-        public override IList<Category> GetEntities(Predicate<Category> predicate, bool loadReferences = false, Func<Category, object> SortPredicate = null)
+        public override IList<Category> GetEntities<Parameter>(Predicate<Category> predicate, bool loadReferences = false, Func<Category, Parameter> SortPredicate = null)
         {
             var category = base.GetEntities(predicate, loadReferences, SortPredicate);
 
@@ -69,7 +69,7 @@ namespace RecipesBook.DataManagers
                 Id = "4",
                 Name = "4",
                 Description = "description4",
-                DateOfAdd = DateTime.Now,
+                DateOfAdd = new DateTime(2020, 3, 21),
                 Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
             });
             Entities.Add(new Category()
