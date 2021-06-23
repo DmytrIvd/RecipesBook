@@ -56,21 +56,23 @@ namespace RecipesBook.DataManagers
             }
             return e;
         }
-        public override IList<Recipe> GetEntities(bool loadReferences = false)
+        public override IList<Recipe> GetEntities(bool loadReferences = false, Func<Recipe, object> SortPredicate = null)
         {
-            var entities = base.GetEntities();
+            var entities = base.GetEntities(loadReferences, SortPredicate);
+
             if (loadReferences)
             {
-                foreach(var e in entities)
+                foreach (var e in entities)
                 {
                     LoadCategoryReferences(e);
                 }
             }
             return entities;
         }
-        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate, bool loadReferences = false)
+        public override IList<Recipe> GetEntities(Predicate<Recipe> predicate, bool loadReferences = false, Func<Recipe, object> SortPredicate = null)
         {
-            var entities = base.GetEntities();
+            var entities = base.GetEntities(predicate, loadReferences, SortPredicate);
+
             if (loadReferences)
             {
                 foreach (var e in entities)
@@ -91,6 +93,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple bisquid",
                 Description = "Yeah",
                 Id = "1",
+                DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },
@@ -109,6 +112,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple blossom",
                 Description = "Yeah",
                 Id = "2",
+                DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },
@@ -127,6 +131,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple from apple",
                 Description = "Yeah",
                 Id = "3",
+                DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },
@@ -145,6 +150,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple dydy",
                 Description = "Yeah",
                 Id = "4",
+                DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },
@@ -163,6 +169,7 @@ namespace RecipesBook.DataManagers
                 Name = "Apple trish",
                 Description = "Yeah",
                 Id = "5",
+                DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
                     new Category() { Id="1" },

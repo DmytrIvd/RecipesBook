@@ -58,13 +58,22 @@ namespace RecipesBook.DataManagers
             return Entities.SingleOrDefault(e => e.ID == key.ToString());
         }
 
-        public virtual IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false)
+        public virtual IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false, Func<T, object> SortPredicate = null)
         {
-            return Entities.Where(e => predicate.Invoke(e)).ToList();
+            var entities = Entities.Where(e => predicate.Invoke(e));
+            if (SortPredicate != null)
+            {
+                entities.OrderByDescending(e => SortPredicate.Invoke(e));
+            }
+            return entities.ToList();
         }
 
-        public virtual IList<T> GetEntities(bool loadReferences = false)
+        public virtual IList<T> GetEntities(bool loadReferences = false, Func<T, object> SortPredicate = null)
         {
+            if (SortPredicate != null)
+            {
+                return Entities.OrderByDescending(e => SortPredicate.Invoke(e)).ToList();
+            }
             return Entities;
         }
 

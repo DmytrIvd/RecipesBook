@@ -1,5 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+
+
+    IEnumerable<Recipe> recipes = ViewData["Recipes"] as IEnumerable<Recipe>;
+    IEnumerable<Category> categories = ViewData["Categories"] as IEnumerable<Category>;
+    bool fisrt = true;
 }
 
 <h4 class="text-center my-4">Popular recipes</h4>
@@ -21,36 +26,37 @@
     *@
 
     <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="~/favicon.ico" class="d-block w-100" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Dish1 name</h5>
-                <p>Dish1 description.</p>
-                <a class="btn btn-outline-secondary" href="/recipes/1">
-                    View receipt
-                </a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="~/favicon.ico" class="d-block w-100" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Dish2 name</h5>
-                <p>Dish2 description.</p>
-                <a class="btn btn-outline-secondary" href="/recipes/2">
-                    View receipt
-                </a>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="~/favicon.ico" class="d-block w-100" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Dish3 name</h5>
-                <p>Dish3 description.</p>
-                <a class="btn btn-outline-secondary" href="/recipes/3">
-                    View receipt
-                </a>
-            </div>
-        </div>
+
+        @foreach (var recipe in recipes)
+        {
+            if (fisrt)
+            {
+                <div class="carousel-item active">
+                    <img src=@recipe.MainImage class="d-block w-100">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@recipe.Name</h5>
+                        <p>@recipe.Description</p>
+                        <a class="btn btn-outline-secondary" href="/recipes/@recipe.ID">
+                            View receipt
+                        </a>
+                    </div>
+                </div>
+                fisrt = false;
+            }
+            else{
+                <div class="carousel-item">
+                    <img src="~/path-to-photo" class="d-block w-100">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@recipe.Name</h5>
+                        <p>@recipe.Description</p>
+                        <a class="btn btn-outline-secondary" href="/recipes/@recipe.ID">
+                            View receipt
+                        </a>
+                    </div>
+                </div>
+            }
+
+        }
     </div>
     <a class="carousel-control-prev" href="#carouselExampleFade" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -63,105 +69,25 @@
 </div>
 <h4 class="text-center my-5">Popular  categories</h4>
 <div class="row mt-5">
-
-
     @*Categories*@
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/1" class="category-link">
+    @foreach (var category in categories)
+    {
+        <div class="col-md-6 col-lg-3 mb-4 category">
+            <a href="/category/@category.ID" class="category-link">
 
 
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
+                <div class="card">
+                    <img class="category-photo card-img" src=@category.MainImage>
+                    <div class="card-img-overlay">
+                        <h1 class="card-title text-black text-center">@category.Name</h1>
+                    </div>
                 </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/2" class="category-link">
+            </a>
+        </div>
+    }
 
 
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/3" class="category-link">
 
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/4" class="category-link">
-
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/5" class="category-link">
-
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/6" class="category-link">
-
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/7" class="category-link">
-
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4 category">
-        <a href="/category/8" class="category-link">
-
-
-            <div class="card">
-                <img class="category-photo card-img" src="~/favicon.ico" alt="Card image">
-                <div class="card-img-overlay">
-                    <h1 class="card-title text-black text-center">Category name</h1>
-                </div>
-            </div>
-        </a>
-    </div>
 
 </div>
 

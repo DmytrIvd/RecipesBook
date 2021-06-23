@@ -13,7 +13,7 @@ namespace RecipesBook.DataManagers
         bool Delete(object key);
         T Get(Predicate<T> predicate, bool loadReferences = false);
         T Get(object key, bool loadReferences = false);
-        IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false);
-        IList<T> GetEntities(bool loadReferences = false);
+        IList<T> GetEntities(Predicate<T> predicate, bool loadReferences = false, Func<T, object> SortPredicate = null);
+        IList<T> GetEntities(bool loadReferences = false, Func<T, object> SortPredicate = null);
     }
 }

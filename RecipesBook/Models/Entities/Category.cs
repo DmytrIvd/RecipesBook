@@ -12,6 +12,8 @@ namespace RecipesBook.Models.Entities
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public DateTime DateOfAdd { get; set; }
+
         public byte[] MainImage { get; set; }
         public Recipe[] Recipes { get; set; }
 
