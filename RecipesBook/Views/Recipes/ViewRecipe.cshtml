@@ -36,68 +36,17 @@
 </div>
 <h5>Instruction</h5>
 <div id="steps" class="my-2">
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
+    @for (int i = 0; i < Model.Steps.Length; i++)
+    {
+        <div id="step-@i" class="step">
+            <img src=@Model.Steps[i].Img height="100" width="100" />
 
-    <p>lorem</p>
+            <p>@Model.Steps[i].Text</p>
 
-    <p>lorem</p>
-    <p>lorem</p>
+        </div>
+        <hr />
 
-
-    <p>lorem</p>
-
-    <p>lorem</p>
-    <p>lorem</p>loremlorem
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-
-
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-
-    <p>lorem</p>
-
-
-    <p>lorem</p>
-
-    <p>lorem</p>
-
-
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-    <p>lorem</p>
-
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>
-    <p>lorem</p>loremloremloremloremlorem
+    }
 </div>
 <script>
     function handleChange(checkbox) {

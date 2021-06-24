@@ -44,6 +44,7 @@ namespace RecipesBook.DataManagers
             {
 
                 LoadCategoryReferences(recipe);
+                LoadStepsReferences(recipe);
             }
             return recipe;
         }
@@ -53,6 +54,7 @@ namespace RecipesBook.DataManagers
             if (loadReferences)
             {
                 LoadCategoryReferences(e);
+                LoadStepsReferences(e);
             }
             return e;
         }
@@ -65,6 +67,7 @@ namespace RecipesBook.DataManagers
                 foreach (var e in entities)
                 {
                     LoadCategoryReferences(e);
+                    LoadStepsReferences(e);
                 }
             }
             return entities;
@@ -78,6 +81,7 @@ namespace RecipesBook.DataManagers
                 foreach (var e in entities)
                 {
                     LoadCategoryReferences(e);
+                    LoadStepsReferences(e);
                 }
             }
             return entities;
@@ -104,7 +108,13 @@ namespace RecipesBook.DataManagers
 
                 },
                 UsersThatLiked = new User[] { },
-                Steps = new Step[] { },
+                Steps = new Step[] {
+                    new Step() { Id="1" },
+                    new Step() { Id = "2" },
+                    new Step() { Id = "3" },
+                    new Step() { Id = "4" },
+                    new Step() { Id = "5" }
+                },
                 MainImage = null
             });
             Entities.Add(new Recipe()

@@ -11,7 +11,6 @@ namespace RecipesBook.Models.Entities
         public string Text { get; set; }
         public byte[] Img { get; set; }
         public Recipe Recipe { get; set; }
-
         public override bool Equals(object obj)
         {
             return obj is Step step &&
