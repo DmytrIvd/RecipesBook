@@ -45,23 +45,33 @@ namespace RecipesBook.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult SearchCategory([FromForm] string search, [FromForm] string[] categories)
+        public IActionResult SearchCategory([FromForm] string search)
         {
             if (search == null)
             {
                 return View(_categoryService.GetEntities(SortPredicate: (category) => category.Name));
             }
-            var entities = _categoryService.GetEntities((r) => r.Name.Contains(search), SortPredicate: (recipe) => recipe.DateOfAdd);
+            var entities = _categoryService.GetEntities((c) => c.Name.Contains(search), SortPredicate: (c) => c.DateOfAdd);
             return View(entities);
 
         }
-        public IActionResult SearchRecipe([FromForm] string search)
+        public IActionResult SearchRecipe([FromForm] string search, [FromForm] string[] categories)
         {
+            ViewData["Categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd);
             if (search == null)
             {
+
                 return View(_recipeService.GetEntities(SortPredicate: (recipe) => recipe.Name));
             }
-            var entities = _recipeService.GetEntities((r) => r.Name.Contains(search), SortPredicate: (recipe) => recipe.DateOfAdd);
+            Func<Recipe, bool> filter = new Func<Recipe, bool>(
+                (r) =>
+                (search == null
+                ||
+                r.Name.Contains(search)) &&
+                (categories.Length == 0
+                ||
+                categories.All(c => r.Categories.Any(cat => cat.ID == c))));
+            var entities = _recipeService.GetEntities(filter, SortPredicate: (recipe) => recipe.DateOfAdd);
             return View(entities);
         }
 
