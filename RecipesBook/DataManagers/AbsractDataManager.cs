@@ -48,9 +48,9 @@ namespace RecipesBook.DataManagers
             return false;
         }
 
-        public virtual T Get(Predicate<T> predicate, bool loadReferences = false)
+        public virtual T Get(Func<T, bool> predicate, bool loadReferences = false)
         {
-            return Entities.SingleOrDefault(e => predicate.Invoke(e));
+            return Entities.SingleOrDefault(predicate);
         }
 
         public virtual T Get(object key, bool loadReferences = false)
@@ -58,9 +58,9 @@ namespace RecipesBook.DataManagers
             return Entities.SingleOrDefault(e => e.ID == key.ToString());
         }
 
-        public virtual IList<T> GetEntities<Parameter>(Predicate<T> predicate, bool loadReferences = false, Func<T, Parameter> SortPredicate = null)
+        public virtual IList<T> GetEntities<Parameter>(Func<T, bool> predicate, bool loadReferences = false, Func<T, Parameter> SortPredicate = null)
         {
-            var entities = Entities.Where(e => predicate.Invoke(e));
+            var entities = Entities.Where(predicate);
             if (SortPredicate != null)
             {
                 entities.OrderByDescending(e => SortPredicate.Invoke(e));

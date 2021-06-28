@@ -45,5 +45,27 @@ namespace RecipesBook.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult SearchCategory([FromForm] string search, [FromForm] string[] categories)
+        {
+            if (search == null)
+            {
+                return View(_categoryService.GetEntities(SortPredicate: (category) => category.Name));
+            }
+            var entities = _categoryService.GetEntities((r) => r.Name.Contains(search), SortPredicate: (recipe) => recipe.DateOfAdd);
+            return View(entities);
+
+        }
+        public IActionResult SearchRecipe([FromForm] string search)
+        {
+            if (search == null)
+            {
+                return View(_recipeService.GetEntities(SortPredicate: (recipe) => recipe.Name));
+            }
+            var entities = _recipeService.GetEntities((r) => r.Name.Contains(search), SortPredicate: (recipe) => recipe.DateOfAdd);
+            return View(entities);
+        }
+
+
     }
 }
+

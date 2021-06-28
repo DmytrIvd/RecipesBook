@@ -48,7 +48,7 @@ namespace RecipesBook.DataManagers
             }
             return recipe;
         }
-        public override Recipe Get(Predicate<Recipe> predicate, bool loadReferences = false)
+        public override Recipe Get(Func<Recipe, bool> predicate, bool loadReferences = false)
         {
             var e = base.Get(predicate);
             if (loadReferences)
@@ -72,7 +72,7 @@ namespace RecipesBook.DataManagers
             }
             return entities;
         }
-        public override IList<Recipe> GetEntities<Parameter>(Predicate<Recipe> predicate, bool loadReferences = false, Func<Recipe, Parameter> SortPredicate = null)
+        public override IList<Recipe> GetEntities<Parameter>(Func<Recipe, bool> predicate, bool loadReferences = false, Func<Recipe, Parameter> SortPredicate = null)
         {
             var entities = base.GetEntities(predicate, loadReferences, SortPredicate);
 

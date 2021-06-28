@@ -20,31 +20,10 @@ namespace RecipesBook.Controllers
         {
             return View();
         }
-        public IActionResult ViewRecipes([FromQuery] string[] category, [FromQuery] string name)
-        {
-            Predicate<Recipe> predicate = new Predicate<Recipe>(
-                r =>
-                (
-                    category == null
-                            ||
-                    category.All(
-                       c => r.Categories.Any(cat => cat.ID == c))
-                )
-                &&
-                (
-                    name == null
-                    ||
-                    r.Name.Contains(name)
-                )
-                );
-
-            
-            return View();
-        }
         [Route("recipes/{recipe}")]
         public IActionResult ViewRecipe([FromRoute] string recipe)
         {
-            var rec = _recipeService.Get(recipe, loadReferences: true) ;
+            var rec = _recipeService.Get(recipe, loadReferences: true);
             if (rec == null)
             {
                 Response.StatusCode = 404;
