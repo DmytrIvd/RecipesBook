@@ -53,6 +53,9 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="SearchRecipe">Search</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Recipes" asp-action="UploadRecipe">Upload</a>
+                        </li>
                     </ul>
 
                     <ul class="navbar-nav">
@@ -93,10 +96,12 @@
     <script src="https://unpkg.com/scrollreveal@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
         ScrollReveal().reveal('.category', { interval: 200 });
 
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

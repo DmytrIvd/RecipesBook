@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RecipesBook.Models.Entities
@@ -8,8 +9,8 @@ namespace RecipesBook.Models.Entities
     public class Recipe : IEntity
     {
         public string Id { get; set; }
-
-        public string ID => Id;
+        [JsonIgnore]
+        public string ID { get { return Id; } }
 
         public string Name { get; set; }
         public string Description { get; set; }
@@ -20,7 +21,7 @@ namespace RecipesBook.Models.Entities
         public Step[] Steps { get; set; }
 
         public Category[] Categories { get; set; }
-
+        public User Author { get; set; }
         public User[] UsersThatLiked { get; set; }
 
         public override bool Equals(object obj)

@@ -44,6 +44,7 @@ namespace RecipesBook.DataManagers
             {
                 var index = Entities.IndexOf(entity);
                 Entities[index] = editedEntity;
+                return true;
             }
             return false;
         }

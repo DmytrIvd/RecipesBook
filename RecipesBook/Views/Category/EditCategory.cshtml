@@ -1,0 +1,55 @@
+﻿@model RecipesBook.Models.Entities.Category
+
+@{
+    ViewData["Title"] = "EditCategory";
+}
+
+<h1>EditCategory</h1>
+
+<h4>Category</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditCategory" enctype="multipart/form-data">
+            <input type="hidden" name="Recipes" value='@Json.Serialize(Model.Recipes)' />
+            @if (Model.MainImage != null)
+            {
+                <input type="hidden" name="MainImage" value="@Json.Serialize(Model.MainImage)" />
+            }
+            @Html.HiddenFor(model => model.Id)
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfAdd" class="control-label"></label>
+                <input asp-for="DateOfAdd" class="form-control" />
+                <span asp-validation-for="DateOfAdd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @{
+                    if (Model.MainImage != null)
+                    {
+                        <img class="img-fluid" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)" />
+                    }
+                }
+
+                <label for="image" class="control-label">Select image</label>
+                <input id="image" name="image" class="form-control" type="file" accept="image/*" />
+                <span asp-validation-for="MainImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

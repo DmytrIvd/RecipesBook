@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace RecipesBook.Models.Entities
 {
@@ -6,7 +7,8 @@ namespace RecipesBook.Models.Entities
     {
         public string Id { get; set; }
 
-        public string ID => Id;
+        [JsonIgnore]
+        public string ID { get { return Id; } }
 
         public string Text { get; set; }
         public byte[] Img { get; set; }

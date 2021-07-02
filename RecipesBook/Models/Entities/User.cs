@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RecipesBook.Models.Entities
@@ -13,7 +14,8 @@ namespace RecipesBook.Models.Entities
         public string Password { get; set; }
         public Recipe[] LikedRecipes { get; set; }
 
-        public string ID => Email;
+        [JsonIgnore]
+        public string ID { get { return Email; } }
 
         public override bool Equals(object obj)
         {

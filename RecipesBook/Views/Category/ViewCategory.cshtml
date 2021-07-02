@@ -4,9 +4,20 @@
 @model Category
 @{
     ViewData["Title"] = Model.Name;
-    
+
 }
-<h2>Category @Model.Name</h2>
+<h2>@Model.Name</h2>
+@{ 
+    if (Model.MainImage != null)
+    {
+        <img class="img-fluid" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)" />
+    }
+    else
+    {
+        <p>@Model.Description</p>
+    }
+}
+
 <div class="row">
     @foreach (var item in Model.Recipes)
     {

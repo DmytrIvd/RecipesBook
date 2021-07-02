@@ -12,9 +12,14 @@ namespace RecipesBook.Controllers
     public class RecipesController : Controller
     {
         private readonly IDataManager<Recipe> _recipeService;
-        public RecipesController(IDataManager<Recipe> recipes)
+        private readonly IDataManager<Category> _categoryService;
+        private readonly IDataManager<Step> _stepService;
+
+        public RecipesController(IDataManager<Recipe> recipes, IDataManager<Category> categories, IDataManager<Step> steps)
         {
             _recipeService = recipes;
+            _categoryService = categories;
+            _stepService = steps;
         }
         public IActionResult Index()
         {
@@ -32,6 +37,32 @@ namespace RecipesBook.Controllers
             return View("/Views/Recipes/ViewRecipe.cshtml",
                rec
                 );
+        }
+        [Route("uploadRecipe")]
+        [HttpPost]
+        public IActionResult UploadRecipe(Recipe recipe)
+        {
+
+            if (ModelState.IsValid)
+            {
+                _recipeService.Create(recipe);
+
+                return RedirectToAction("ViewRecipe", "Recipes", recipe.ID);
+            }
+
+            return View();
+
+
+        }
+        [Route("uploadRecipe")]
+        [HttpGet]
+        public IActionResult UploadRecipe()
+        {
+            if (ViewData["categories"] == null)
+            {
+                ViewData["categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.Name);
+            }
+            return View();
         }
     }
 }

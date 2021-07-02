@@ -11,7 +11,7 @@
 <div id="carouselExampleFade" class="carousel slide" data-ride="carousel">
 
     @*Popular recipes*@
- 
+
 
     <div class="carousel-inner">
 
@@ -31,7 +31,8 @@
                 </div>
                 fisrt = false;
             }
-            else{
+            else
+            {
                 <div class="carousel-item">
                     <img src="~/path-to-photo" class="d-block w-100">
                     <div class="carousel-caption d-none d-md-block">
@@ -65,9 +66,21 @@
 
 
                 <div class="card">
-                    <img class="category-photo card-img" src=@category.MainImage>
+                    @if (category.MainImage != null)
+                    {
+                        <img class="category-photo card-img" src="data:image/png;base64,@Convert.ToBase64String(category.MainImage, Base64FormattingOptions.None)">
+                    }
+                    else
+                    {
+                        <img class="category-photo card-img" alt="nothing">
+                    }
+
                     <div class="card-img-overlay">
                         <h1 class="card-title text-black text-center">@category.Name</h1>
+                        @if (category.MainImage == null)
+                        {
+                            <h5 class="card-body text-black text-center">@category.Description</h5>
+                        }
                     </div>
                 </div>
             </a>

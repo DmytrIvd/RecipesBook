@@ -80,7 +80,6 @@ namespace RecipesBook.DataManagers
                 DateOfAdd = DateTime.Now,
                 Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
             });
-
         }
     }
 }
