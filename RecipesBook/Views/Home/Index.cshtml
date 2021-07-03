@@ -1,9 +1,9 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 
 
-    IEnumerable<Recipe> recipes = ViewData["Recipes"] as IEnumerable<Recipe>;
-    IEnumerable<Category> categories = ViewData["Categories"] as IEnumerable<Category>;
+
     bool fisrt = true;
 }
 
@@ -15,7 +15,7 @@
 
     <div class="carousel-inner">
 
-        @foreach (var recipe in recipes)
+        @foreach (var recipe in Model.Recipes)
         {
             if (fisrt)
             {
@@ -59,7 +59,7 @@
 <h4 class="text-center my-5">Popular  categories</h4>
 <div class="row mt-5">
     @*Categories*@
-    @foreach (var category in categories)
+    @foreach (var category in Model.Categories)
     {
         <div class="col-md-6 col-lg-3 mb-4 category">
             <a href="/category/@category.ID" class="category-link">

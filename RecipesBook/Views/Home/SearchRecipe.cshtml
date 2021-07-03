@@ -1,25 +1,26 @@
-﻿@model IEnumerable<RecipesBook.Models.Entities.Recipe>
+﻿@model SearchRecipeViewModel
 @{
     ViewData["Title"] = "Recipes";
-    IEnumerable<Category> categories = ViewData["Categories"] as IEnumerable<Category>;
+
 }
 
 @Html.ActionLink("Search category", "SearchCategory", new { controller = "Home" }, new { @class = "btn btn-primary" })
 @using (Html.BeginForm("SearchRecipe", "Home", FormMethod.Post, new { @class = "form" }))
 {
     <label for="search">Enter name:</label>
-    @Html.TextBox("search", null, new { @class = "form-control p-3" })
+    @Html.TextBoxFor(model => model.search, new { @class = "form-control p-3" })
+
     <div class="input-group my-3">
         <div class="input-group-prepend">
-            <label for="categories" class="input-group-text">Select categories</label>
+            <label asp-for="filteredCategories">Select categories: </label>
         </div>
-        @Html.DropDownList("categories", new MultiSelectList(categories, "ID", "Name"), new { multiple = "multiple", @class = "form-control" })
+        @Html.ListBoxFor(model => model.filteredCategories, new MultiSelectList(Model.AllCategories, "ID", "Name"), new { @class = "form-control" })
 
     </div>
     <input type="submit" value="Search" class="btn btn-success" />
 }
 <h1>Recipes</h1>
-@if (Model.Count() == 0)
+@if (Model.FilteredRecipes.Count() == 0)
 {
 
 
@@ -29,7 +30,7 @@ else
 {
 
     <div class="row">
-        @foreach (var item in Model)
+        @foreach (var item in Model.FilteredRecipes)
         {
             <div id="recipe-@item.Id" class="card col-3 p-3">
 
@@ -48,7 +49,7 @@ else
             <li class="page-item disabled">
                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
             </li>
-            @for (int i = 0; i < Model.Count(); i++)
+            @for (int i = 0; i < Model.FilteredRecipes.Count(); i++)
             {
                 <li class="page-item"><a class="page-link" href="?page=@(i+1)">@(i+1)</a></li>
             }
@@ -66,7 +67,7 @@ else
 
     <script>
         $(document).ready(function () {
-            $("#categories").select2({
+            $("#filteredCategories").select2({
                 placeholder: {
                     id: '', // the value of the option
                     text: 'None Selected'

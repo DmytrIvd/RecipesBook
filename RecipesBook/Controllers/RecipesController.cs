@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using RecipesBook.DataManagers;
 using RecipesBook.Models;
 using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,17 +42,37 @@ namespace RecipesBook.Controllers
         }
         [Route("uploadRecipe")]
         [HttpPost]
-        public IActionResult UploadRecipe(Recipe recipe)
+        public IActionResult UploadRecipe(Recipe recipe, string[] categories, IFormFile image)
         {
+            if (categories.Length != 0)
+            {
+                recipe.Categories = categories.Select(c => _categoryService.Get(c)).ToArray();
 
+            }
+            if (image != null)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    image.CopyTo(ms);
+                    recipe.MainImage = ms.ToArray();
+                }
+            }
+            // ModelState.Clear();
+          
+            recipe.DateOfAdd = DateTime.Now;
+            ModelState.Clear();
+            TryValidateModel(recipe);
             if (ModelState.IsValid)
             {
                 _recipeService.Create(recipe);
 
                 return RedirectToAction("ViewRecipe", "Recipes", recipe.ID);
             }
-
-            return View();
+            if (ViewData["categories"] == null)
+            {
+                ViewData["categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.Name);
+            }
+            return View(recipe);
 
 
         }

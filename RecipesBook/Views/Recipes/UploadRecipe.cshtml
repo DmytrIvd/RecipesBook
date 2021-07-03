@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "UploadRecipe";
     IEnumerable<Category> categories = (IEnumerable<Category>)ViewData["Categories"];
+    MultiSelectList selectListItems = new MultiSelectList(categories, "Id", "Name", Model != null ? Model.Categories.Select(c => c.Id).ToArray() : null);
 }
 
 <h1>UploadRecipe</h1>
@@ -24,8 +25,8 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="categories" class="control-label"></label>
-                @Html.DropDownList("categories", new MultiSelectList(categories, "ID", "Name"), new { multiple = "multiple", @class = "form-control" })
+                <label asp-for="Categories"></label>
+                @Html.ListBox("Categories", selectListItems, new { @class = "form-control" })
                 <span asp-validation-for="Categories" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,12 +43,12 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            $("#categories").select2({
-                placeholder: {
-                    id: '', // the value of the option
-                    text: 'None Selected'
-                }, multiple: true
-            });
+            //$("#Categories").select2({
+            //    placeholder: {
+            //        id: '', // the value of the option
+            //        text: 'None Selected'
+            //    }, multiple: true
+            //});
         });
     </script>
 }

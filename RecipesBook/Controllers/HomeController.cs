@@ -26,55 +26,92 @@ namespace RecipesBook.Controllers
         [Route("[controller]/[action]")]
         public IActionResult Index()
         {
-            ViewData["Categories"] = _categoryService.GetEntities(SortPredicate: (category) => category.DateOfAdd).Take(5);
-            ViewData["Recipes"] = _recipeService.GetEntities(SortPredicate: (recipe) => recipe.DateOfAdd).Take(10);
-            return View();
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = _categoryService.GetEntities(SortPredicate: (category) => category.DateOfAdd).Take(5),
+                Recipes = _recipeService.GetEntities(SortPredicate: (recipe) => recipe.DateOfAdd).Take(10)
+            };
+
+            return View(homeViewModel);
         }
+
         [Route("[controller]/[action]")]
         public IActionResult Privacy()
         {
             return View();
         }
+
         [Route("[controller]/[action]")]
         public IActionResult About()
         {
             return View();
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult SearchCategory([FromForm] string search)
-        {
-            if (search == null)
-            {
-                return View(_categoryService.GetEntities(SortPredicate: (category) => category.Name));
-            }
-            var entities = _categoryService.GetEntities((c) => c.Name.Contains(search), SortPredicate: (c) => c.DateOfAdd);
-            return View(entities);
 
+
+        #region Category Search
+        [HttpPost]
+        public IActionResult SearchCategory(SearchCategoryViewModel categorySearch)
+        {
+
+            categorySearch.filteredCategories = _categoryService.GetEntities((c) => categorySearch.search == null || c.Name.Contains(categorySearch.search), SortPredicate: (c) => c.DateOfAdd);
+            return View(categorySearch);
         }
-        public IActionResult SearchRecipe([FromForm] string search, [FromForm] string[] categories)
+        [HttpGet]
+        public IActionResult SearchCategory()
         {
-            ViewData["Categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd);
-            if (search == null)
+            SearchCategoryViewModel searchCategoryViewModel = new SearchCategoryViewModel
             {
+                search = null,
+                filteredCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd)
+            };
+            return View(searchCategoryViewModel);
+        }
 
-                return View(_recipeService.GetEntities(SortPredicate: (recipe) => recipe.Name));
-            }
+
+
+        #endregion
+
+        #region Recipe Search
+        [HttpPost]
+        public IActionResult SearchRecipe(SearchRecipeViewModel searchRecipe)
+        {
+            searchRecipe.AllCategories = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd);
             Func<Recipe, bool> filter = new Func<Recipe, bool>(
                 (r) =>
-                (search == null
+                (searchRecipe.search == null
                 ||
-                r.Name.Contains(search)) &&
-                (categories.Length == 0
+                r.Name.Contains(searchRecipe.search)) &&
+                (searchRecipe.filteredCategories == null
                 ||
-                categories.All(c => r.Categories.Any(cat => cat.ID == c))));
-            var entities = _recipeService.GetEntities(filter, SortPredicate: (recipe) => recipe.DateOfAdd);
-            return View(entities);
-        }
+                r.Categories.Any(c => searchRecipe.filteredCategories.Contains(c.Id))));
 
+
+            searchRecipe.FilteredRecipes =
+                _recipeService.GetEntities(filter, SortPredicate: (recipe) => recipe.DateOfAdd);
+            return View(searchRecipe);
+        }
+        [HttpGet]
+        public IActionResult SearchRecipe()
+        {
+            SearchRecipeViewModel searchRecipe = new SearchRecipeViewModel
+            {
+                AllCategories = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd),
+                FilteredRecipes = _recipeService.GetEntities(SortPredicate: (c) => c.DateOfAdd),
+                filteredCategories = new string[0],
+                search = null
+            };
+
+
+
+            return View(searchRecipe);
+        }
+        #endregion
 
     }
 }

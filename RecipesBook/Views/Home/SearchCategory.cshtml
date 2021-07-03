@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RecipesBook.Models.Entities.Category>
+﻿@model SearchCategoryViewModel
 @{
     ViewData["Title"] = "Categories";
 }
@@ -6,13 +6,13 @@
 @using (Html.BeginForm("SearchCategory", "Home", FormMethod.Post, new { @class = "form-inline mt-3" }))
 {
     <label for="search" class="mx-2">Enter name:</label>
-    @Html.TextBox("search", null, new { @class = "form-control p-3" })
+    @Html.TextBoxFor(model => model.search, new { @class = "form-control p-3" })
 
- 
+
     <input type="submit" value="Search" class="btn btn-success" />
 }
 <h1>Categories</h1>
-@if (Model.Count() == 0)
+@if (Model.filteredCategories.Count() == 0)
 {
     <h5 class="text-warning">Nothing is found.</h5>
 }
@@ -20,7 +20,7 @@ else
 {
 
     <div class="row">
-        @foreach (var item in Model)
+        @foreach (var item in Model.filteredCategories)
         {
             <div id="recipe-@item.Id" class="card col-3 p-3">
 
@@ -39,7 +39,7 @@ else
             <li class="page-item disabled">
                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
             </li>
-            @for (int i = 0; i < Model.Count(); i++)
+            @for (int i = 0; i < Model.filteredCategories.Count(); i++)
             {
                 <li class="page-item"><a class="page-link" href="?page=@(i+1)">@(i+1)</a></li>
             }

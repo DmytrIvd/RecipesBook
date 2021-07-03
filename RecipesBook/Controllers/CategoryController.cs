@@ -45,36 +45,47 @@ namespace RecipesBook.Controllers
             {
                 cat.Recipes[i] = _recipeService.Get(cat.Recipes[i].ID);
             }
-            return View("/Views/Category/ViewCategory.cshtml",
-              cat); ;
+            return View(cat);
         }
-
-
+        #region Create category
         [HttpPost]
         [Route("createCategory")]
-        public IActionResult CreateCategory(Category category, IFormFile image)
+        public IActionResult CreateCategory(CategoryAddEditViewModel categoryView)
         {
-            if (ModelState.IsValid && image != null)
+            //if (image != null)
+            //{
+            //    using (MemoryStream ms = new MemoryStream())
+            //    {
+            //        image.CopyTo(ms);
+            //        category.MainImage = ms.ToArray();
+            //    }
+            //}
+
+            if (ModelState.IsValid)
             {
 
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    image.CopyTo(ms);
-                    category.MainImage = ms.ToArray();
-                }
                 //Just stupid
                 var id = int.Parse(_categoryService.GetEntities(SortPredicate: c => c.Id).First().Id) + 1;
-                category.Id = id.ToString();
-                category.DateOfAdd = DateTime.Now;
-                category.Recipes = new Recipe[0];
+
+                Category category = new Category()
+                {
+                    Id = id.ToString(),
+                    DateOfAdd = DateTime.Now,
+                    Recipes = new Recipe[0],
+                    Name = categoryView.Name,
+                    Description = categoryView.Description
+                };
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    categoryView.MainImage.CopyTo(ms);
+                    category.MainImage = ms.ToArray();
+                }
+
                 _categoryService.Create(category);
                 return Redirect($"category/{category.ID}");
             }
-            if (image == null)
-            {
-                ModelState.AddModelError("MainImage", "Property cannot be null");
-            }
-            return View();
+
+            return View(categoryView);
         }
         [HttpGet]
         [Route("createCategory")]
@@ -82,57 +93,69 @@ namespace RecipesBook.Controllers
         {
             return View();
         }
-
+        #endregion
+        #region Edit category
         [HttpPost]
-        [Route("editCategory/{category}")]
-        public IActionResult EditCategory([FromForm] Category category, [FromForm] IFormFile image, [FromForm] string Recipes, [FromForm] string MainImage)
+        [Route("editCategory/{id}")]
+        public IActionResult EditCategory(string id, CategoryAddEditViewModel categoryView)
         {
             if (ModelState.IsValid)
             {
+                var original = _categoryService.Get(id);
+                Category editedCategory = new Category
+                {
+                    Name = categoryView.Name,
+                    Description = categoryView.Description,
+                    DateOfAdd = original.DateOfAdd,
+                    Recipes = original.Recipes
+                };
 
-                category.Recipes = JsonConvert.DeserializeObject<Recipe[]>(Recipes);
-                if (MainImage != null)
-                    category.MainImage = (byte[])JsonConvert.DeserializeObject(MainImage);
-                if (image != null)
+                //if (MainImage != null)
+                //    category.MainImage = (byte[])JsonConvert.DeserializeObject(MainImage);
+                if (categoryView.MainImage != null)
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        image.CopyTo(ms);
-                        category.MainImage = ms.ToArray();
+                        categoryView.MainImage.CopyTo(ms);
+                        editedCategory.MainImage = ms.ToArray();
                     }
                 }
 
-                if (_categoryService.Edit(category.ID, category))
+                if (_categoryService.Edit(id, editedCategory))
                 {
-                    return Redirect($"/category/{category.ID}");
+                    return Redirect($"category/{id}");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Cannot save changes, try again later");
-                }
+                ModelState.AddModelError("", "Cannot save changes, try again later");
+
 
             }
-            if (image == null)
-            {
-                ModelState.AddModelError("MainImage", "Property cannot be null");
-            }
-            return View(category);
+
+            return View(categoryView);
         }
         [HttpGet]
         [Route("editCategory/{category}")]
         public IActionResult EditCategory(string category)
         {
+
             var cat = _categoryService.Get(category);
+
             if (cat == null)
             {
                 Response.StatusCode = 404;
                 return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
 
             }
-            return View(cat);
+            CategoryAddEditViewModel categoryAddEditViewModel = new CategoryAddEditViewModel()
+            {
+                Id = cat.Id,
+                Name = cat.Name,
+                Description = cat.Description,
+                RealImage = cat.MainImage
+            };
+            return View(categoryAddEditViewModel);
         }
-
-
+        #endregion
+        #region delete category
         [Route("deleteCategory/{category}")]
         public IActionResult DeleteCategory(string category)
         {
@@ -144,5 +167,6 @@ namespace RecipesBook.Controllers
             return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
 
         }
+        #endregion
     }
 }
