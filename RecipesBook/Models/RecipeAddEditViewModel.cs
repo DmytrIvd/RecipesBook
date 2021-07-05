@@ -29,7 +29,7 @@ namespace RecipesBook.Models
         [MinLength(1, ErrorMessage = "Add some more tags please")]
         public string[] SelectedCategories { get; set; }
 
-        [Required(ErrorMessage = "Select image please")]
+       
         public IFormFile MainImage { get; set; }
 
         [Required(ErrorMessage = "Add some ingredients please!")]
@@ -43,5 +43,7 @@ namespace RecipesBook.Models
 
         public Step[] Steps { get; set; }
 
+        [Required(ErrorMessage = "Select image please")]
+        public byte[] RealImage { get;  set; }
     }
 }

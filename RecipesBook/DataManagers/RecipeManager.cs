@@ -1,6 +1,7 @@
 ﻿using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace RecipesBook.DataManagers
@@ -92,6 +93,17 @@ namespace RecipesBook.DataManagers
 
         protected override void Seed()
         {
+            string filename = "./wwwroot/images/NotFound.png";
+            byte[] bytes = null;
+            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            {
+                // Create a byte array of file stream length
+                bytes = System.IO.File.ReadAllBytes(filename);
+                //Read block of bytes from stream into the byte array
+                fs.Read(bytes, 0, System.Convert.ToInt32(fs.Length));
+                //Close the File Stream
+                fs.Close();
+            }
             Entities.Add(new Recipe()
             {
                 Name = "Apple bisquid",
@@ -102,20 +114,17 @@ namespace RecipesBook.DataManagers
                 Categories = new Category[] {
                     new Category() { Id="1" },
                     new Category() { Id = "2" },
-                    new Category() { Id = "3" },
-                    new Category() { Id = "4" },
-                    new Category() { Id = "5" }
+
 
                 },
                 UsersThatLiked = new User[] { },
                 Steps = new Step[] {
-                    new Step() { Id="1" },
-                    new Step() { Id = "2" },
+
                     new Step() { Id = "3" },
                     new Step() { Id = "4" },
                     new Step() { Id = "5" }
                 },
-                MainImage = null
+                MainImage = bytes
             });
             Entities.Add(new Recipe()
             {
@@ -127,14 +136,11 @@ namespace RecipesBook.DataManagers
                 Categories = new Category[] {
                     new Category() { Id="1" },
                     new Category() { Id = "2" },
-                    new Category() { Id = "3" },
-                    new Category() { Id = "4" },
-                    new Category() { Id = "5" }
 
                 },
                 UsersThatLiked = new User[] { },
                 Steps = new Step[] { },
-                MainImage = null
+                MainImage = bytes
             });
             Entities.Add(new Recipe()
             {
@@ -144,16 +150,12 @@ namespace RecipesBook.DataManagers
                 DateOfAdd = DateTime.Now,
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
-                    new Category() { Id="1" },
-                    new Category() { Id = "2" },
-                    new Category() { Id = "3" },
-                    new Category() { Id = "4" },
-                    new Category() { Id = "5" }
+                    new Category() { Id="1" }
 
                 },
                 UsersThatLiked = new User[] { },
                 Steps = new Step[] { },
-                MainImage = null
+                MainImage = bytes
             });
             Entities.Add(new Recipe()
             {
@@ -163,16 +165,13 @@ namespace RecipesBook.DataManagers
                 DateOfAdd = new DateTime(1993, 9, 21),
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
-                    new Category() { Id="1" },
-                    new Category() { Id = "2" },
-                    new Category() { Id = "3" },
-                    new Category() { Id = "4" },
+                   
                     new Category() { Id = "5" }
 
                 },
                 UsersThatLiked = new User[] { },
                 Steps = new Step[] { },
-                MainImage = null
+                MainImage = bytes
             });
             Entities.Add(new Recipe()
             {
@@ -184,14 +183,11 @@ namespace RecipesBook.DataManagers
                 Categories = new Category[] {
                     new Category() { Id="1" },
                     new Category() { Id = "2" },
-                    new Category() { Id = "3" },
-                    new Category() { Id = "4" },
-                    new Category() { Id = "5" }
 
                 },
                 UsersThatLiked = new User[] { },
                 Steps = new Step[] { },
-                MainImage = null
+                MainImage = bytes
             });
         }
     }

@@ -28,7 +28,7 @@ namespace RecipesBook.Controllers
         {
             HomeViewModel homeViewModel = new HomeViewModel
             {
-                Categories = _categoryService.GetEntities(SortPredicate: (category) => category.DateOfAdd).Take(5),
+                Categories = _categoryService.GetEntities(SortPredicate: (category) => category.DateOfAdd).Take(8),
                 Recipes = _recipeService.GetEntities(SortPredicate: (recipe) => recipe.DateOfAdd).Take(10)
             };
 
@@ -56,11 +56,11 @@ namespace RecipesBook.Controllers
 
         #region Category Search
         [HttpPost]
-        public IActionResult SearchCategory(SearchCategoryViewModel categorySearch)
+        public IActionResult SearchCategory(string search)
         {
 
-            categorySearch.filteredCategories = _categoryService.GetEntities((c) => categorySearch.search == null || c.Name.Contains(categorySearch.search), SortPredicate: (c) => c.DateOfAdd);
-            return View(categorySearch);
+            var filteredCategories = _categoryService.GetEntities((c) => search == null || c.Name.ToLower().Contains(search.ToLower()), SortPredicate: (c) => c.DateOfAdd);
+            return PartialView("ViewCategories", filteredCategories);
         }
         [HttpGet]
         public IActionResult SearchCategory()
@@ -79,22 +79,22 @@ namespace RecipesBook.Controllers
 
         #region Recipe Search
         [HttpPost]
-        public IActionResult SearchRecipe(SearchRecipeViewModel searchRecipe)
+        public IActionResult SearchRecipe(string[] selectedCategories, string search)
         {
-            searchRecipe.AllCategories = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd);
+
             Func<Recipe, bool> filter = new Func<Recipe, bool>(
                 (r) =>
-                (searchRecipe.search == null
+                (search == null
                 ||
-                r.Name.Contains(searchRecipe.search)) &&
-                (searchRecipe.filteredCategories == null
+                r.Name.ToLower().Contains(search.ToLower())) &&
+                (selectedCategories.Length == 0
                 ||
-                r.Categories.Any(c => searchRecipe.filteredCategories.Contains(c.Id))));
+                r.Categories.Any(c => selectedCategories.Contains(c.Id))));
 
 
-            searchRecipe.FilteredRecipes =
-                _recipeService.GetEntities(filter, SortPredicate: (recipe) => recipe.DateOfAdd);
-            return View(searchRecipe);
+            var FilteredRecipes =
+               _recipeService.GetEntities(filter, SortPredicate: (recipe) => recipe.DateOfAdd);
+            return PartialView("ViewRecipes", FilteredRecipes);
         }
         [HttpGet]
         public IActionResult SearchRecipe()
@@ -103,7 +103,7 @@ namespace RecipesBook.Controllers
             {
                 AllCategories = _categoryService.GetEntities(SortPredicate: (c) => c.DateOfAdd),
                 FilteredRecipes = _recipeService.GetEntities(SortPredicate: (c) => c.DateOfAdd),
-                filteredCategories = new string[0],
+                selectedCategories = new string[0],
                 search = null
             };
 

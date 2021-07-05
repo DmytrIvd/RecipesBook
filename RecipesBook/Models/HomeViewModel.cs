@@ -14,7 +14,7 @@ namespace RecipesBook.Models
     public class SearchRecipeViewModel
     {
         public IEnumerable<Category> AllCategories { get; set; }
-        public string[] filteredCategories { get; set; }
+        public string[] selectedCategories { get; set; }
         public string search { get; set; }
         public IEnumerable<Recipe> FilteredRecipes { get; set; }
     }

@@ -5,69 +5,52 @@
 }
 
 @Html.ActionLink("Search category", "SearchCategory", new { controller = "Home" }, new { @class = "btn btn-primary" })
-@using (Html.BeginForm("SearchRecipe", "Home", FormMethod.Post, new { @class = "form" }))
-{
+<form asp-action="SearchRecipe" asp-controller="Home"
+      method="post"
+      data-ajax="true"
+      data-ajax-mode="replace" data-ajax-update="#results">
     <label for="search">Enter name:</label>
     @Html.TextBoxFor(model => model.search, new { @class = "form-control p-3" })
 
     <div class="input-group my-3">
         <div class="input-group-prepend">
-            <label asp-for="filteredCategories">Select categories: </label>
+            <label asp-for="selectedCategories">Select categories: </label>
         </div>
-        @Html.ListBoxFor(model => model.filteredCategories, new MultiSelectList(Model.AllCategories, "ID", "Name"), new { @class = "form-control" })
+        @Html.ListBoxFor(model => model.selectedCategories, new MultiSelectList(Model.AllCategories, "ID", "Name"), new { @class = "form-control" })
 
     </div>
     <input type="submit" value="Search" class="btn btn-success" />
-}
+</form>
 <h1>Recipes</h1>
-@if (Model.FilteredRecipes.Count() == 0)
-{
 
 
-    <h5 class="text-warning">Nothing is found.</h5>
-}
-else
-{
-
-    <div class="row">
-        @foreach (var item in Model.FilteredRecipes)
+<div id="results" class="row">
+    <partial name="ViewRecipes" model="@Model.FilteredRecipes">
+</div>
+<nav class="nav-pagination">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        @for (int i = 0; i < Model.FilteredRecipes.Count(); i++)
         {
-            <div id="recipe-@item.Id" class="card col-3 p-3">
-
-
-                <img class="card-img-top" height="150" width="150">
-                <div class="card-body">
-                    <h5 class="card-title">@item.Name</h5>
-                    <p class="card-text">@item.Description</p>
-                    <a href="/recipes/@item.Id" class="btn btn-primary">View recipe</a>
-                </div>
-            </div>
+            <li class="page-item"><a class="page-link" href="?page=@(i+1)">@(i+1)</a></li>
         }
-    </div>
-    <nav class="nav-pagination">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            @for (int i = 0; i < Model.FilteredRecipes.Count(); i++)
-            {
-                <li class="page-item"><a class="page-link" href="?page=@(i+1)">@(i+1)</a></li>
-            }
 
 
-            <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-            </li>
-        </ul>
-    </nav>
+        <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
 
-}
+
 @section scripts{
 
 
     <script>
         $(document).ready(function () {
-            $("#filteredCategories").select2({
+            $("#selectedCategories").select2({
                 placeholder: {
                     id: '', // the value of the option
                     text: 'None Selected'

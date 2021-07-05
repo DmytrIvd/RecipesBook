@@ -6,7 +6,6 @@
 
 <h1>CreateCategory</h1>
 
-<h4>Category</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,28 +13,70 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control" required />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <input asp-for="Description" class="form-control" required />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" asp-for="MainImage">Select image</label>
-                </div>
-                <input asp-for="MainImage" class="form-control" accept="image/*" />
+            <img id="ImageDisplay" class="img-fluid mb-2" />
+            @if (Model != null && Model.RealImage != null)
+            {
+                <input type="hidden" name="RealImage" id="RealImage" value="@Model.RealImage" />
+            }
+            <div class="form-group  mb-4">
+                <label asp-for="MainImage">Select image</label>
 
-
+                <input asp-for="MainImage" class="form-control" accept="image/*" required />
+                <span asp-validation-for="MainImage" class=" text-danger"></span>
             </div>
-            <span asp-validation-for="MainImage" class=" input-group-text text-danger mb-4"></span>
-            
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    console.log(input.files);
+                    console.log(input.files[0]);
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#ImageDisplay').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            $(document).on("change", "#MainImage", function () {
+                readURL(this);
+
+            })
+            @{
+                bool IsMainImageSelected=Model != null && Model.RealImage != null;
+
+                string base64 = "";
+                if (IsMainImageSelected)
+                {
+                    base64 = Model.RealImage;
+                }
+             }
+            let setSelected = @IsMainImageSelected.ToString().ToLower();
+            if (setSelected) {
+                $("#MainImage").removeAttr("required");
+                
+                $('#ImageDisplay').attr('src', "data:image/png;base64,@Html.Raw(base64)");
+            }
+        });
+
+    </script>
+}
 

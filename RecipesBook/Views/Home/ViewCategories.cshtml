@@ -1,0 +1,6 @@
+﻿@model IEnumerable<RecipesBook.Models.Entities.Category>
+
+@foreach (var item in @Model)
+{
+    <partial name="_viewCategory" model="item" />
+}

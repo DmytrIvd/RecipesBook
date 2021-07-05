@@ -1,0 +1,12 @@
+﻿@model RecipesBook.Models.Entities.Category
+
+<div id="category-@Model.Id" class="card col-3 p-3">
+
+
+    <img class="card-img-top" height="150" width="150" src="data:image/png;base64, @Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text">@Model.Description</p>
+        <a href="/category/@Model.Id" class="btn btn-primary">View category</a>
+    </div>
+</div>

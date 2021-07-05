@@ -52,14 +52,17 @@ namespace RecipesBook.Controllers
         [Route("createCategory")]
         public IActionResult CreateCategory(CategoryAddEditViewModel categoryView)
         {
-            //if (image != null)
-            //{
-            //    using (MemoryStream ms = new MemoryStream())
-            //    {
-            //        image.CopyTo(ms);
-            //        category.MainImage = ms.ToArray();
-            //    }
-            //}
+            if (categoryView.MainImage != null)
+            {
+                byte[] image = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    categoryView.MainImage.CopyTo(ms);
+                    image = ms.ToArray();
+                }
+                categoryView.RealImage = Convert.ToBase64String(image);
+            }
+
 
             if (ModelState.IsValid)
             {
@@ -73,13 +76,10 @@ namespace RecipesBook.Controllers
                     DateOfAdd = DateTime.Now,
                     Recipes = new Recipe[0],
                     Name = categoryView.Name,
-                    Description = categoryView.Description
+                    Description = categoryView.Description,
+                    MainImage = Convert.FromBase64String(categoryView.RealImage)
                 };
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    categoryView.MainImage.CopyTo(ms);
-                    category.MainImage = ms.ToArray();
-                }
+
 
                 _categoryService.Create(category);
                 return Redirect($"category/{category.ID}");
@@ -99,31 +99,33 @@ namespace RecipesBook.Controllers
         [Route("editCategory/{id}")]
         public IActionResult EditCategory(string id, CategoryAddEditViewModel categoryView)
         {
+            if (categoryView.MainImage != null)
+            {
+                byte[] image = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    categoryView.MainImage.CopyTo(ms);
+                    image = ms.ToArray();
+                }
+                categoryView.RealImage = Convert.ToBase64String(image);
+            }
             if (ModelState.IsValid)
             {
                 var original = _categoryService.Get(id);
                 Category editedCategory = new Category
                 {
+                    Id = original.Id,
                     Name = categoryView.Name,
                     Description = categoryView.Description,
                     DateOfAdd = original.DateOfAdd,
-                    Recipes = original.Recipes
-                };
+                    Recipes = original.Recipes,
+                    MainImage = Convert.FromBase64String(categoryView.RealImage)
 
-                //if (MainImage != null)
-                //    category.MainImage = (byte[])JsonConvert.DeserializeObject(MainImage);
-                if (categoryView.MainImage != null)
-                {
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        categoryView.MainImage.CopyTo(ms);
-                        editedCategory.MainImage = ms.ToArray();
-                    }
-                }
+                };
 
                 if (_categoryService.Edit(id, editedCategory))
                 {
-                    return Redirect($"category/{id}");
+                    return Redirect($"/category/{id}");
                 }
                 ModelState.AddModelError("", "Cannot save changes, try again later");
 
@@ -150,7 +152,7 @@ namespace RecipesBook.Controllers
                 Id = cat.Id,
                 Name = cat.Name,
                 Description = cat.Description,
-                RealImage = cat.MainImage
+                RealImage = Convert.ToBase64String(cat.MainImage)
             };
             return View(categoryAddEditViewModel);
         }
@@ -162,6 +164,8 @@ namespace RecipesBook.Controllers
             if (_categoryService.Delete(category))
             {
                 ViewBag.Messsage = "Record Delete Successfully";
+                //To admin page
+                //TODO
                 return Redirect("/");
             }
             return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });

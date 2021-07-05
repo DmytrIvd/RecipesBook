@@ -23,11 +23,11 @@ namespace RecipesBook.Models
         [MaxLength(30, ErrorMessage = "Too long description")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Select image please")]
+       
         public IFormFile MainImage { get; set; }
 
        
-        public byte[] RealImage { get; set; }
+        public string RealImage { get; set; }
 
     }
 }

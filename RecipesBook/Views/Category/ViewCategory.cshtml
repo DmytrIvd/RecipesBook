@@ -7,30 +7,18 @@
 
 }
 <h2>@Model.Name</h2>
-@{ 
-    if (Model.MainImage != null)
-    {
-        <img class="img-fluid" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)" />
-    }
-    else
-    {
-        <p>@Model.Description</p>
-    }
-}
+
+<img class="img-fluid" src="data:image/png;base64, @Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)" />
+
+<p>@Model.Description</p>
+
+
 
 <div class="row">
     @foreach (var item in Model.Recipes)
     {
-        <div id="recipe-@item.Id" class="card col-3 p-3">
+        <partial name="_viewRecipe" model="item"/>
 
-
-            <img class="card-img-top" height="150" width="150">
-            <div class="card-body">
-                <h5 class="card-title">@item.Name</h5>
-                <p class="card-text">@item.Description</p>
-                <a href="/recipes/@item.Id" class="btn btn-primary">View recipe</a>
-            </div>
-        </div>
     }
 </div>
 <nav class="nav-pagination">

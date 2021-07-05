@@ -6,12 +6,12 @@
 
 <h1>EditCategory</h1>
 
-<h4>Category</h4>
+<h4>@Model.Name</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form action="/editCategory/@Model.Id" method="post" enctype="multipart/form-data">
-            @Html.HiddenFor(model => model.Id);
+            @Html.HiddenFor(model => model.Id)
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -23,12 +23,11 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            @{
-                if (Model != null && Model.RealImage != null)
-                {
-                    <img class="img-fluid" src="data:image/png;base64,@Convert.ToBase64String(Model.RealImage,Base64FormattingOptions.None)" />
-                }
+            @if (Model != null && Model.RealImage != null)
+            {
+                <input type="hidden" name="RealImage" id="RealImage" value="@Model.RealImage" />
             }
+            <img id="ImageDisplay" class="img-fluid mb-2" />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <label class="input-group-text" asp-for="MainImage">Select image</label>
@@ -41,6 +40,43 @@
         </form>
     </div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
 
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    console.log(input.files);
+                    console.log(input.files[0]);
+                    var reader = new FileReader();
 
+                    reader.onload = function (e) {
+                        $('#ImageDisplay').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            $(document).on("change", "#MainImage", function () {
+                readURL(this);
+
+            })
+            @{
+                bool IsMainImageSelected=Model != null && Model.RealImage != null;
+
+                string base64 = "";
+                if (IsMainImageSelected)
+                {
+                    base64 = Model.RealImage;
+                }
+             }
+            let setSelected = @IsMainImageSelected.ToString().ToLower();
+            if (setSelected) {
+                $("#MainImage").removeAttr("required");
+
+                $('#ImageDisplay').attr('src', "data:image/png;base64,@Html.Raw(base64)");
+            }
+        });
+
+    </script>
+}
 

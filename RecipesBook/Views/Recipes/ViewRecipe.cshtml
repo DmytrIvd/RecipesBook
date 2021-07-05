@@ -10,7 +10,7 @@
 <h1 class="text-muted">@Model.Name</h1>
 <h3>@Model.Description</h3>
 
-<img class="img-fluid" width="800" height="600" />
+<img class="img-fluid" width="800" height="600" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage, Base64FormattingOptions.None)"/>
 
 <h5>Categories:</h5>
 <div id="categories" class="my-3">

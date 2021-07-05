@@ -36,7 +36,7 @@ namespace RecipesBook.Controllers
                 Response.StatusCode = 404;
                 return View("Error", new ErrorViewModel() { Message = "It seems this recipe does not exist (yet or already)" });
             }
-            return View("/Views/Recipes/ViewRecipe.cshtml",
+            return View(
                rec
                 );
         }
@@ -58,7 +58,7 @@ namespace RecipesBook.Controllers
                 }
             }
             // ModelState.Clear();
-          
+
             recipe.DateOfAdd = DateTime.Now;
             ModelState.Clear();
             TryValidateModel(recipe);
@@ -85,6 +85,51 @@ namespace RecipesBook.Controllers
                 ViewData["categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.Name);
             }
             return View();
+        }
+        [Route("editRecipe/{recipe}")]
+        [HttpGet]
+        public IActionResult EditRecipe(string recipe)
+        {
+            var rec = _recipeService.Get(recipe, true);
+            if (rec != null)
+            {
+                RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
+                {
+                    AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
+                    SelectedCategories = new string[0],
+                    Description = rec.Description,
+                    Name = rec.Name,
+                    Ingredients = rec.Ingredients,
+                    RealImage = rec.MainImage,
+                    Steps = rec.Steps,
+                };
+                return View(recipeAddEditViewModel);
+            }
+            return View("Error", new ErrorViewModel() { Message = "It seems this recipe does not exist (yet or already)" });
+
+        }
+        [Route("editRecipe/{recipe}")]
+        [HttpPost]
+        public IActionResult EditRecipe(string recipe, RecipeAddEditViewModel recipeAddEditViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+
+                return Redirect($"recipes/{recipe}");
+            }
+            return View(recipeAddEditViewModel);
+        }
+        [Route("deleteRecipe/{recipe}")]
+        public IActionResult DeleteRecipe(string recipe)
+        {
+            if (_recipeService.Delete(recipe))
+            {
+                //Redirect to admin panel 
+                //TODO
+                return Redirect("/");
+            }
+            return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
+
         }
     }
 }
