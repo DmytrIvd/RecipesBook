@@ -11,6 +11,7 @@ namespace RecipesBook.Models
 {
     public class RecipeAddEditViewModel
     {
+        public string Id { get; set; }
         [DisplayName("Recipe name")]
         [Required(ErrorMessage = "Please enter recipe name")]
         [MinLength(3, ErrorMessage = "The name is too small!")]
@@ -26,11 +27,12 @@ namespace RecipesBook.Models
         public IEnumerable<Category> AllCategories { get; set; }
 
         [Required(ErrorMessage = "Please add category tags so people can find your recipe quicker")]
+        [DisplayName("Categories")]
         [MinLength(1, ErrorMessage = "Add some more tags please")]
         public string[] SelectedCategories { get; set; }
 
        
-        public IFormFile MainImage { get; set; }
+       
 
         [Required(ErrorMessage = "Add some ingredients please!")]
         [MinLength(2, ErrorMessage = "How to cook with one ingredient?")]
@@ -41,9 +43,9 @@ namespace RecipesBook.Models
         [MinLength(1, ErrorMessage = "Add some steps please")]
         [MaxLength(20, ErrorMessage = "Tooo many steps")]
 
-        public Step[] Steps { get; set; }
+        public StepAddEditViewModel[] Steps { get; set; }
 
-        [Required(ErrorMessage = "Select image please")]
-        public byte[] RealImage { get;  set; }
+        public IFormFile MainImage { get; set; }
+        public string RealImage { get;  set; }
     }
 }

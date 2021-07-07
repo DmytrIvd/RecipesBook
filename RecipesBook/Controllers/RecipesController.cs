@@ -42,37 +42,55 @@ namespace RecipesBook.Controllers
         }
         [Route("uploadRecipe")]
         [HttpPost]
-        public IActionResult UploadRecipe(Recipe recipe, string[] categories, IFormFile image)
+        public IActionResult UploadRecipe(RecipeAddEditViewModel recipeAddEditViewModel)
         {
-            if (categories.Length != 0)
+            if (recipeAddEditViewModel.MainImage != null)
             {
-                recipe.Categories = categories.Select(c => _categoryService.Get(c)).ToArray();
-
-            }
-            if (image != null)
-            {
+                byte[] image = null;
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    image.CopyTo(ms);
-                    recipe.MainImage = ms.ToArray();
+                    recipeAddEditViewModel.MainImage.CopyTo(ms);
+                    image = ms.ToArray();
+                }
+
+                recipeAddEditViewModel.RealImage = Convert.ToBase64String(image);
+            }
+
+            IList<Category> tags = new List<Category>();
+            if (recipeAddEditViewModel.SelectedCategories != null)
+            {
+                tags = _categoryService.GetEntities(
+                   (c) => recipeAddEditViewModel.SelectedCategories.Contains(c.ID), SortPredicate: c => c.ID);
+                if (tags.Count == 0)
+                {
+                    ModelState.AddModelError("SelectedCategories", "Error");
                 }
             }
-            // ModelState.Clear();
 
-            recipe.DateOfAdd = DateTime.Now;
-            ModelState.Clear();
-            TryValidateModel(recipe);
             if (ModelState.IsValid)
             {
+
+
+                var id = int.Parse(_recipeService.GetEntities(SortPredicate: c => c.Id).First().Id) + 1;
+                Recipe recipe = new Recipe
+                {
+                    Id = id.ToString(),
+                    Name = recipeAddEditViewModel.Name,
+                    Categories = tags.ToArray(),
+                    DateOfAdd = DateTime.Now,
+                    Description = recipeAddEditViewModel.Description,
+                    Ingredients = recipeAddEditViewModel.Ingredients,
+                    MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
+
+
+                };
                 _recipeService.Create(recipe);
 
-                return RedirectToAction("ViewRecipe", "Recipes", recipe.ID);
+                return Redirect($"recipes/{recipe.ID}");
+
             }
-            if (ViewData["categories"] == null)
-            {
-                ViewData["categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.Name);
-            }
-            return View(recipe);
+            recipeAddEditViewModel.AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd);
+            return View(recipeAddEditViewModel);
 
 
         }
@@ -80,11 +98,22 @@ namespace RecipesBook.Controllers
         [HttpGet]
         public IActionResult UploadRecipe()
         {
-            if (ViewData["categories"] == null)
+            RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
             {
-                ViewData["categories"] = _categoryService.GetEntities(SortPredicate: (c) => c.Name);
-            }
-            return View();
+                AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
+                Steps=new StepAddEditViewModel[]
+                {
+                    new StepAddEditViewModel
+                    {
+                        Text="123",
+                    },
+                    new StepAddEditViewModel
+                    {
+                        Text="333"
+                    }
+                }
+            };
+            return View(recipeAddEditViewModel);
         }
         [Route("editRecipe/{recipe}")]
         [HttpGet]
@@ -100,8 +129,7 @@ namespace RecipesBook.Controllers
                     Description = rec.Description,
                     Name = rec.Name,
                     Ingredients = rec.Ingredients,
-                    RealImage = rec.MainImage,
-                    Steps = rec.Steps,
+                    RealImage = Convert.ToBase64String(rec.MainImage),
                 };
                 return View(recipeAddEditViewModel);
             }

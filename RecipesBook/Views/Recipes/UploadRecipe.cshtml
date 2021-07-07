@@ -1,54 +1,97 @@
-﻿@model RecipesBook.Models.Entities.Recipe
+﻿@model RecipeAddEditViewModel
 
 @{
     ViewData["Title"] = "UploadRecipe";
-    IEnumerable<Category> categories = (IEnumerable<Category>)ViewData["Categories"];
-    MultiSelectList selectListItems = new MultiSelectList(categories, "Id", "Name", Model != null ? Model.Categories.Select(c => c.Id).ToArray() : null);
 }
 
 <h1>UploadRecipe</h1>
 
-<h4>Recipe</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="UploadRecipe">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Categories"></label>
-                @Html.ListBox("Categories", selectListItems, new { @class = "form-control" })
-                <span asp-validation-for="Categories" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label for="image" class="control-label"></label>
-                <input id="image" name="image" type="file" class="form-control" />
-                <span asp-validation-for="MainImage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="UploadRecipe" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-</div>
-@section scripts{
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedCategories"></label>
+
+        @Html.ListBoxFor(model => model.SelectedCategories, new MultiSelectList(Model.AllCategories, "ID", "Name"), new { @class = "form-control" })
+
+        <span asp-validation-for="SelectedCategories" class="text-danger"></span>
+    </div>
+    <div class="form-row mb-4">
+        <img id="ImageDisplay" class="img-fluid col-md-6" />
+        @if (Model != null && Model.RealImage != null)
+        {
+            <input type="hidden" name="RealImage" id="RealImage" value="@Model.RealImage" />
+        }
+        <div class="form-group col-md-6">
+            <label asp-for="MainImage">Select image</label>
+            <input asp-for="MainImage" class="form-control" accept="image/*" required />
+            <span asp-validation-for="MainImage" class=" text-danger"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <label asp-for="Ingredients" class="control-label h4"></label>
+        @Html.EditorFor(model => model.Ingredients, "_ingredientsGrid")
+        <span asp-validation-for="Ingredients" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Steps" class="control-label h4"></label>
+        @Html.EditorFor(model => model.Steps, "_stepsGrid")
+        <span asp-validation-for="Steps" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+@section Scripts{
     <script>
         $(document).ready(function () {
-            //$("#Categories").select2({
-            //    placeholder: {
-            //        id: '', // the value of the option
-            //        text: 'None Selected'
-            //    }, multiple: true
-            //});
+            $("#SelectedCategories").select2({
+                placeholder: {
+                    id: '', // the value of the option
+                    text: 'None Selected'
+                }, multiple: true
+            });
+              function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#ImageDisplay').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            $(document).on("change", "#MainImage", function () {
+                readURL(this);
+
+            })
+            @{
+                bool IsMainImageSelected=Model != null && Model.RealImage != null;
+
+                string base64 = "";
+                if (IsMainImageSelected)
+                {
+                    base64 = Model.RealImage;
+                }
+             }
+            let setSelected = @IsMainImageSelected.ToString().ToLower();
+            if (setSelected) {
+
+                $("#MainImage").removeAttr("required");
+
+                $('#ImageDisplay').attr('src', "data:image/png;base64,@Html.Raw(base64)");
+            }
         });
     </script>
 }

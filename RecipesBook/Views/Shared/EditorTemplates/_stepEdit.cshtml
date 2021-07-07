@@ -1,0 +1,24 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model StepAddEditViewModel
+<form>
+    <div class="form-row mb-4">
+        @Html.LabelFor(model => model.Text)
+        @Html.TextAreaFor(model => model.Text, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Text)
+    </div>
+    <div class="form-row mb-4">
+        <img id="ImageDisplay" class="img-fluid col-md-6" />
+        @if (Model != null && Model.RealImg != null)
+        {
+            <input type="hidden" name="RealImage" id="RealImage" value="@Model.RealImg" />
+        }
+        <div class="form-group col-md-6">
+
+            <input asp-for="SelectedImg" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="SelectedImg" class=" text-danger"></span>
+        </div>
+    </div>
+
+</form>

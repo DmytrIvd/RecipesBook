@@ -1,0 +1,57 @@
+﻿@model String[]
+<div class="input-group mb-3">
+    <input type="text" id="newIngredient" />
+    <div class="input-group-append">
+        <a id="CreateNewIngredient" class="btn btn-primary">Create</a>
+    </div>
+
+</div>
+<div class="row" id="results">
+
+    @if (Model != null)
+    {
+        for (int i = 0; i < Model.Length; i++)
+        {
+            <div id="Ingredient-@i" class="col-md-4 Ingredient mb-2">
+                <div class="input-group">
+                    <input type="text" name="Ingredients[@i]" class="form-control" value="@Model[i]" />
+                    @* @Html.TextBoxFor(m => Model[i])*@
+                    <div class="input-group-append">
+                        <a class="btn btn-danger DeleteIngredient">X</a>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    }
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        $("#CreateNewIngredient").click(function (e) {
+            let text = $("#newIngredient").val()
+            if (text) {
+                $("#newIngredient").val("")
+                let index = $(".Ingredient").length
+                if (!index) {
+                    index = 0;
+                }
+                $("#results").append(
+                    `<div id = "Ingredient-${index}" class= "col-md-4 Ingredient mb-2" >
+                    <div class="input-group">
+                    <input type="text" name="Ingredients[${index}]" class="form-control" value="${text}" />
+                        <div class="input-group-append">
+                            <a class="btn btn-danger DeleteIngredient">X</a>
+                        </div>
+                    </div>
+                </div>`);
+            }
+
+        })
+        $(".DeleteIngredient").click(function () {
+            $(this).parent().remove();
+        })
+    });
+</script>
