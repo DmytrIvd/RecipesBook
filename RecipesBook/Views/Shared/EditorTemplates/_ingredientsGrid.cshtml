@@ -17,7 +17,7 @@
                     <input type="text" name="Ingredients[@i]" class="form-control" value="@Model[i]" />
                     @* @Html.TextBoxFor(m => Model[i])*@
                     <div class="input-group-append">
-                        <a class="btn btn-danger DeleteIngredient">X</a>
+                        <a href="#" class="btn btn-danger DeleteIngredient">X</a>
                     </div>
 
                 </div>
@@ -47,11 +47,16 @@
                         </div>
                     </div>
                 </div>`);
+              
             }
 
         })
-        $(".DeleteIngredient").click(function () {
-            $(this).parent().remove();
-        })
+        $(document).on('click', '.DeleteIngredient', function (e) {
+            e.preventDefault();
+            e.preventDefault();
+            $(this).closest(".Ingredient").remove();
+        });
+       
+        
     });
 </script>
