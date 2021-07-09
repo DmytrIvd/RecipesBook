@@ -2,9 +2,98 @@
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model StepAddEditViewModel[]
-
-@for (int i = 0; i < Model.Length; i++)
-{
-    @Html.EditorFor(model => Model[i], "_stepEdit")
-    @*@Html.EditorFor(model => Model[i])*@
+@{
+    Layout = null;
+    bool isEdit = false;
+    if (ViewData["isEdit"] != null)
+    {
+        isEdit = (bool)ViewData["isEdit"];
+    }
 }
+<div>
+    <a id="create-step" class="btn btn-primary">
+        Create step
+    </a>
+</div>
+<!--<form>-->
+
+<hr />
+<div id="stepEditor" class="row">
+    @{ if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+
+                @Html.EditorFor(model => item, "_stepEdit")
+
+
+            }
+        }
+    }
+</div>
+@{
+    string[] loadedImages = null;
+    if (Model != null && Model.Length != 0)
+    {
+        loadedImages = new string[Model.Length];
+        for (int i = 0; i < Model.Length; i++)
+        {
+            if (Model[i] != null && Model[i].RealImg != null)
+            {
+
+                loadedImages[i] = Model[i].RealImg;
+
+            }
+        }
+    }
+}
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let isEdit=@isEdit.ToString().ToLower();
+        $("#create-step").click(function () {
+            $.get('@Url.Action("CreateStep")', function (template) {
+                $("#stepEditor").append(template)
+
+
+            });
+
+        })
+        $(document).on("change", `.stepImage`, function () {
+            let indeX = $(this).attr('id');
+            indeX = indeX.slice(indeX.indexOf('_') + 1, indeX.indexOf('__'));
+            console.log(indeX);
+            readURL(this, `Display-Steps_${indeX}__RealImg`);
+
+        })
+
+
+        $(document).on('click', '.DeleteStep', function (e) {
+            if (isEdit) {
+
+            }
+            e.preventDefault();
+            $(this).closest(".step").remove();
+
+        });
+        let indexes = $('input[name="Steps.index"]');
+        if (indexes.length && indexes.length != 0) {
+            let images = @Html.Raw(Json.Serialize(loadedImages));
+            if (images) {
+                for (let i = 0; i < indexes.length; ++i) {
+                    let index = $(indexes[i]).val();
+                    if (images[i]) {
+                        //console.log($(`#Steps_${index}__SelectedImg`));
+                        $(`#Steps_${index}__SelectedImg`).removeAttr("required");
+
+                        //console.log($(`#Display-Steps_${index}__RealImg`));
+                        $(`#Display-Steps_${index}__RealImg`).attr('src', `data:image/png;base64,${images[i]}`);
+
+                    }
+                }
+            }
+        }
+    })
+
+
+</script>

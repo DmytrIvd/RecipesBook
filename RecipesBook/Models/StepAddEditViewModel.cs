@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace RecipesBook.Models
         public string Text { get; set; }
 
 
-        public byte[] RealImg { get; set; }
-        public string SelectedImg { get; set; }
+        public string RealImg { get; set; }
+        public IFormFile SelectedImg { get; set; }
     }
 }

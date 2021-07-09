@@ -1,24 +1,46 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@using HtmlHelpers.BeginCollectionItemCore;
 @model StepAddEditViewModel
-<form>
-    <div class="form-row mb-4">
-        @Html.LabelFor(model => model.Text)
-        @Html.TextAreaFor(model => model.Text, new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Text)
-    </div>
-    <div class="form-row mb-4">
-        <img id="ImageDisplay" class="img-fluid col-md-6" />
-        @if (Model != null && Model.RealImg != null)
+@{
+    Layout = null;
+}
+
+
+<div class="step col-md-6 border border-secondary-2 ">
+    @using (Html.BeginCollectionItem("Steps"))
+    {
+        @if (Model != null && Model.Id != null)
         {
-            <input type="hidden" name="RealImage" id="RealImage" value="@Model.RealImg" />
+            @Html.HiddenFor(model => model.Id)
         }
-        <div class="form-group col-md-6">
+        <div class="form-row mb-4 mt-2">
 
-            <input asp-for="SelectedImg" type="file" class="form-control" accept="image/*" required />
-            <span asp-validation-for="SelectedImg" class=" text-danger"></span>
+            <img id="Display-@Html.GenerateIdFromName(Html.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName("RealImg"))" class="img-fluid col-md-6" />
+            @if (Model != null && Model.RealImg != null)
+            {
+                @Html.HiddenFor(model => model.RealImg)
+            }
+            <div class="form-group col-md-6">
+                <input asp-for="SelectedImg" type="file" class="form-control stepImage" accept="image/*" required />
+                <span asp-validation-for="SelectedImg" class=" text-danger"></span>
+            </div>
         </div>
-    </div>
+        <div class="form-row mb-4">
+            @Html.LabelFor(model => model.Text)
+            @Html.TextAreaFor(model => model.Text, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Text)
+        </div>
 
-</form>
+    }
+    <div class="form-row mb-4">
+        <a href="#" class="DeleteStep btn btn-danger">Delete step</a>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+       
+
+       
+</script>

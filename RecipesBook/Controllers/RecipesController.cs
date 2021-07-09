@@ -40,20 +40,51 @@ namespace RecipesBook.Controllers
                rec
                 );
         }
+
+        [Route("createStep")]
+        [HttpGet]
+        public IActionResult CreateStep()
+        {
+
+            return PartialView("EditorTemplates/_stepEdit", new StepAddEditViewModel());
+        }
+        [Route("deleteStep/{step}")]
+        public IActionResult DeleteStep(string step)
+        {
+            if (_stepService.Delete(step))
+            {
+                Response.StatusCode = 200;
+            }
+            Response.StatusCode = 404;
+            return Ok();
+        }
+        #region Upload recipe
+        private string loadBase64(IFormFile fromFile)
+        {
+            byte[] image = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                fromFile.CopyTo(ms);
+                image = ms.ToArray();
+            }
+            return Convert.ToBase64String(image);
+        }
         [Route("uploadRecipe")]
         [HttpPost]
         public IActionResult UploadRecipe(RecipeAddEditViewModel recipeAddEditViewModel)
         {
+
             if (recipeAddEditViewModel.MainImage != null)
             {
-                byte[] image = null;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    recipeAddEditViewModel.MainImage.CopyTo(ms);
-                    image = ms.ToArray();
-                }
 
-                recipeAddEditViewModel.RealImage = Convert.ToBase64String(image);
+                try
+                {
+                    recipeAddEditViewModel.RealImage = loadBase64(recipeAddEditViewModel.MainImage);
+                }
+                catch (ArgumentNullException)
+                {
+                    ModelState.AddModelError("SelectedImage", "File is damaged");
+                }
             }
 
             IList<Category> tags = new List<Category>();
@@ -67,11 +98,48 @@ namespace RecipesBook.Controllers
                 }
             }
 
+
+            if (recipeAddEditViewModel.Steps != null)
+            {
+                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
+                {
+                    if (recipeAddEditViewModel.Steps[i].SelectedImg != null)
+                    {
+                        try
+                        {
+
+                            recipeAddEditViewModel.Steps[i].RealImg = loadBase64(recipeAddEditViewModel.Steps[i].SelectedImg);
+                        }
+                        catch (ArgumentNullException)
+                        {
+                            ModelState.AddModelError($"Steps[{i}].SelectedImg", "File is damaged");
+                        }
+                    }
+                }
+
+            }
+
             if (ModelState.IsValid)
             {
 
 
                 var id = int.Parse(_recipeService.GetEntities(SortPredicate: c => c.Id).First().Id) + 1;
+                int stepId = int.Parse(_stepService.GetEntities(SortPredicate: s => s.Id).First().Id) + 1;
+                string[] stepsIds = new string[recipeAddEditViewModel.Steps.Length];
+                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
+                {
+                    Step entity = new Step
+                    {
+                        Id = stepId.ToString(),
+                        Text = recipeAddEditViewModel.Steps[i].Text,
+                        Img = Convert.FromBase64String(recipeAddEditViewModel.Steps[i].RealImg),
+                        Recipe = new Recipe { Id = id.ToString() },
+
+                    };
+                    stepsIds[i] = entity.Id;
+                    _stepService.Create(entity);
+
+                }
                 Recipe recipe = new Recipe
                 {
                     Id = id.ToString(),
@@ -81,14 +149,18 @@ namespace RecipesBook.Controllers
                     Description = recipeAddEditViewModel.Description,
                     Ingredients = recipeAddEditViewModel.Ingredients,
                     MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
-
+                    Steps = stepsIds.Select(id => new Step { Id = id }).ToArray()
 
                 };
+
+                //add steps
                 _recipeService.Create(recipe);
 
                 return Redirect($"recipes/{recipe.ID}");
 
             }
+
+
             recipeAddEditViewModel.AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd);
             return View(recipeAddEditViewModel);
 
@@ -100,21 +172,13 @@ namespace RecipesBook.Controllers
         {
             RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
             {
-                AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
-                Steps=new StepAddEditViewModel[]
-                {
-                    new StepAddEditViewModel
-                    {
-                        Text="123",
-                    },
-                    new StepAddEditViewModel
-                    {
-                        Text="333"
-                    }
-                }
+                AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd)
+                
             };
             return View(recipeAddEditViewModel);
         }
+        #endregion
+        #region Edit recipe
         [Route("editRecipe/{recipe}")]
         [HttpGet]
         public IActionResult EditRecipe(string recipe)
@@ -147,6 +211,7 @@ namespace RecipesBook.Controllers
             }
             return View(recipeAddEditViewModel);
         }
+        #endregion
         [Route("deleteRecipe/{recipe}")]
         public IActionResult DeleteRecipe(string recipe)
         {
