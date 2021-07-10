@@ -138,6 +138,7 @@ namespace RecipesBook.Controllers
                     };
                     stepsIds[i] = entity.Id;
                     _stepService.Create(entity);
+                    stepId++;
 
                 }
                 Recipe recipe = new Recipe
@@ -152,11 +153,15 @@ namespace RecipesBook.Controllers
                     Steps = stepsIds.Select(id => new Step { Id = id }).ToArray()
 
                 };
-
+                foreach (var category in recipe.Categories)
+                {
+                    category.Recipes = category.Recipes.Append(new Recipe { Id = recipe.Id }).ToArray();
+                    _categoryService.Edit(category.Id, category);
+                }
                 //add steps
                 _recipeService.Create(recipe);
 
-                return Redirect($"recipes/{recipe.ID}");
+                return Redirect($"/recipes/{recipe.ID}");
 
             }
 
@@ -173,7 +178,7 @@ namespace RecipesBook.Controllers
             RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
             {
                 AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd)
-                
+
             };
             return View(recipeAddEditViewModel);
         }
@@ -188,27 +193,128 @@ namespace RecipesBook.Controllers
             {
                 RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
                 {
+                    Id = rec.Id,
                     AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
-                    SelectedCategories = new string[0],
+                    SelectedCategories = rec.Categories.Select(c => c.Id).ToArray(),
                     Description = rec.Description,
                     Name = rec.Name,
                     Ingredients = rec.Ingredients,
                     RealImage = Convert.ToBase64String(rec.MainImage),
+                    Steps = rec.Steps.Select(s => new StepAddEditViewModel
+                    {
+                        Id = s.Id,
+                        RealImg = Convert.ToBase64String(s.Img),
+                        Text = s.Text
+                    }).ToArray()
                 };
                 return View(recipeAddEditViewModel);
             }
             return View("Error", new ErrorViewModel() { Message = "It seems this recipe does not exist (yet or already)" });
 
         }
+
+
         [Route("editRecipe/{recipe}")]
         [HttpPost]
         public IActionResult EditRecipe(string recipe, RecipeAddEditViewModel recipeAddEditViewModel)
         {
+            if (recipeAddEditViewModel.MainImage != null)
+            {
+
+                try
+                {
+                    recipeAddEditViewModel.RealImage = loadBase64(recipeAddEditViewModel.MainImage);
+                }
+                catch (ArgumentNullException)
+                {
+                    ModelState.AddModelError("SelectedImage", "File is damaged");
+                }
+            }
+
+            IList<Category> tags = new List<Category>();
+            if (recipeAddEditViewModel.SelectedCategories != null)
+            {
+                tags = _categoryService.GetEntities(
+                   (c) => recipeAddEditViewModel.SelectedCategories.Contains(c.ID), SortPredicate: c => c.ID);
+                if (tags.Count == 0)
+                {
+                    ModelState.AddModelError("SelectedCategories", "Error");
+                }
+            }
+
+
+            if (recipeAddEditViewModel.Steps != null)
+            {
+                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
+                {
+                    if (recipeAddEditViewModel.Steps[i].SelectedImg != null)
+                    {
+                        try
+                        {
+
+                            recipeAddEditViewModel.Steps[i].RealImg = loadBase64(recipeAddEditViewModel.Steps[i].SelectedImg);
+                        }
+                        catch (ArgumentNullException)
+                        {
+                            ModelState.AddModelError($"Steps[{i}].SelectedImg", "File is damaged");
+                        }
+                    }
+                }
+
+            }
             if (ModelState.IsValid)
             {
 
-                return Redirect($"recipes/{recipe}");
+                int stepId = int.Parse(_stepService.GetEntities(SortPredicate: s => s.Id).First().Id) + 1;
+                string[] stepsIds = new string[recipeAddEditViewModel.Steps.Length];
+                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
+                {
+                    Step entity = new Step
+                    {
+
+                        Text = recipeAddEditViewModel.Steps[i].Text,
+                        Img = Convert.FromBase64String(recipeAddEditViewModel.Steps[i].RealImg),
+                        Recipe = new Recipe { Id = recipe },
+
+                    };
+                    if (recipeAddEditViewModel.Steps[i].Id == null)
+                    {
+                        entity.Id = stepId.ToString();
+                        stepsIds[i] = entity.Id;
+                        _stepService.Create(entity);
+                        stepId++;
+                        break;
+                    }
+
+                    entity.Id = recipeAddEditViewModel.Steps[i].Id;
+                    stepsIds[i] = entity.Id;
+                    _stepService.Edit(entity.Id, entity);
+                }
+                Recipe editedRecipe = new Recipe
+                {
+                    Id = recipeAddEditViewModel.Id,
+                    Name = recipeAddEditViewModel.Name,
+                    Categories = tags.ToArray(),
+                    DateOfAdd = DateTime.Now,
+                    Description = recipeAddEditViewModel.Description,
+                    Ingredients = recipeAddEditViewModel.Ingredients,
+                    MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
+                    Steps = stepsIds.Select(id => new Step { Id = id }).ToArray()
+
+                };
+                foreach (var category in editedRecipe.Categories)
+                {
+                    if (!category.Recipes.Any(r => r.Id == editedRecipe.Id))
+                    {
+                        category.Recipes = category.Recipes.Append(new Recipe { Id = editedRecipe.Id }).ToArray();
+                        _categoryService.Edit(category.Id, category);
+                    }
+                }
+                //add steps
+                _recipeService.Edit(editedRecipe.Id, editedRecipe);
+                return Redirect($"/recipes/{recipe}");
             }
+            recipeAddEditViewModel.AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd);
             return View(recipeAddEditViewModel);
         }
         #endregion

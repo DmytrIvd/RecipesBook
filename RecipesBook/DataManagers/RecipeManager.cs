@@ -17,6 +17,7 @@ namespace RecipesBook.DataManagers
             _stepsService = stepDataManager;
 
         }
+
         protected virtual void LoadCategoryReferences(Recipe recipe)
         {
 
@@ -25,6 +26,7 @@ namespace RecipesBook.DataManagers
                 for (int i = 0; i < recipe.Categories.Length; i++)
                 {
                     recipe.Categories[i] = _categoryService.Get(recipe.Categories[i].ID);
+                    
                 }
             }
         }
@@ -38,6 +40,7 @@ namespace RecipesBook.DataManagers
                 }
             }
         }
+
         public override Recipe Get(object key, bool loadReferences = false)
         {
             var recipe = base.Get(key);
@@ -59,6 +62,7 @@ namespace RecipesBook.DataManagers
             }
             return e;
         }
+
         public override IList<Recipe> GetEntities<Parameter>(bool loadReferences = false, Func<Recipe, Parameter> SortPredicate = null)
         {
             var entities = base.GetEntities(loadReferences, SortPredicate);
@@ -90,6 +94,56 @@ namespace RecipesBook.DataManagers
         }
 
 
+        public override bool Delete(object key)
+        {
+            var entity = Entities.SingleOrDefault(e => e.ID == key.ToString());
+            if (entity != null)
+            {
+                if (base.Delete(key))
+                {
+                    foreach (var c in entity.Categories)
+                    {
+                        var category = _categoryService.Get(c.Id);
+                        var list = category.Recipes.ToList();
+                        list.RemoveAll(r => r.Id == entity.Id);
+                        category.Recipes = list.ToArray();
+                        _categoryService.Edit(category.Id, category);
+                    }
+                    return true;
+                }
+                
+            }
+            return false;
+        }
+
+        public override bool Edit(object key, Recipe editedEntity)
+        {
+            var Originalentity = Entities.SingleOrDefault(e => e.ID == key.ToString());
+            if (Originalentity != null)
+            {
+
+                if (base.Edit(key, editedEntity))
+                {
+                    var deletedCategories = Originalentity.Categories.Where(c => !editedEntity.Categories.Contains(c)).Select(c => c.Id);
+                    foreach (var c in deletedCategories)
+                    {
+                        var category = _categoryService.Get(c);
+                        var list = category.Recipes.ToList();
+                        list.RemoveAll(r => r.Id == Originalentity.Id);
+                        category.Recipes = list.ToArray();
+                        _categoryService.Edit(category.Id, category);
+                    }
+
+                    var deletedSteps = Originalentity.Steps.Where(c => !editedEntity.Steps.Contains(c)).Select(c => c.Id);
+                    foreach (var s in deletedSteps)
+                    {
+                        _stepsService.Delete(s);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
 
         protected override void Seed()
         {
@@ -165,7 +219,7 @@ namespace RecipesBook.DataManagers
                 DateOfAdd = new DateTime(1993, 9, 21),
                 Ingredients = new string[] { "copper-30gramm" },
                 Categories = new Category[] {
-                   
+
                     new Category() { Id = "5" }
 
                 },

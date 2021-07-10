@@ -16,9 +16,13 @@ namespace RecipesBook.DataManagers
 
         public override Category Get(object key, bool loadReferences = false)
         {
-            var category = base.Get(key, loadReferences);
+            if (key != null)
+            {
+                var category = base.Get(key, loadReferences);
 
-            return category;
+                return category;
+            }
+            return null;
         }
         public override Category Get(Func<Category, bool> predicate, bool loadReferences = false)
         {
@@ -26,6 +30,7 @@ namespace RecipesBook.DataManagers
 
             return category;
         }
+
         public override IList<Category> GetEntities<Parameter>(bool loadReferences = false, Func<Category, Parameter> SortPredicate = null)
         {
             var category = base.GetEntities(loadReferences, SortPredicate);

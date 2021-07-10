@@ -10,15 +10,18 @@
 <h1 class="text-muted">@Model.Name</h1>
 <h3>@Model.Description</h3>
 
-<img class="img-fluid" width="800" height="600" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage, Base64FormattingOptions.None)"/>
+<img class="img-fluid" width="800" height="600" src="data:image/png;base64,@Convert.ToBase64String(Model.MainImage, Base64FormattingOptions.None)" />
 
 <h5>Categories:</h5>
 <div id="categories" class="my-3">
     @for (int i = 0; i < Model.Categories.Length; i++)
     {
-        <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories[i].Id">
-            @Model.Categories[i].Name
-        </a>
+        if (Model.Categories[i] != null)
+        {
+            <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories[i].Id">
+                @Model.Categories[i].Name
+            </a>
+        }
     }
 </div>
 <h5>
@@ -35,11 +38,12 @@
     }
 </div>
 <h5>Instruction</h5>
-<div id="steps" class="my-2">
+
+<div id="steps" class="my-2 row">
     @for (int i = 0; i < Model.Steps.Length; i++)
     {
-        <div id="step-@i" class="step">
-            <img src="data:image/png;base64, @Convert.ToBase64String(Model.Steps[i].Img,Base64FormattingOptions.None)" height="100" width="100" />
+        <div id="step-@i" class="step col-sm-6 col-md-4 border border-secondary-2 ">
+            <img src="data:image/png;base64, @Convert.ToBase64String(Model.Steps[i].Img,Base64FormattingOptions.None)" height="400" width="400" class="img-fluid" />
 
             <p>@Model.Steps[i].Text</p>
 
@@ -48,11 +52,16 @@
 
     }
 </div>
-<script>
-    function handleChange(checkbox) {
-        // console.log(checkbox.labels());
-        $("label[for='" + checkbox.id + "'").toggleClass("checked");
-    }
-</script>
+@section Scripts{
+    <script>
+        function handleChange(checkbox) {
+            // console.log(checkbox.labels());
+            $("label[for='" + checkbox.id + "'").toggleClass("checked");
+        }
+        $(document).ready(function () {
+            ScrollReveal().reveal('.step', { interval: 200 });
+        })
+    </script>
+}
 
 

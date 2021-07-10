@@ -20,7 +20,7 @@ namespace RecipesBook.Models
 
         [Required(ErrorMessage = "Please enter recipe description")]
         [DisplayName("Recipe description")]
-        [MaxLength(30, ErrorMessage = "Too long description")]
+        [MaxLength(200, ErrorMessage = "Too long description")]
         public string Description { get; set; }
 
 
