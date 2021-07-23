@@ -28,7 +28,7 @@ namespace RecipesBook.Controllers
         {
             HomeViewModel homeViewModel = new HomeViewModel
             {
-                Categories = _categoryService.GetEntities(SortPredicate: (category) => category.DateOfAdd).Take(8),
+                Categories = _categoryService.GetEntities((c) => !c.IsHidden, SortPredicate: (category) => category.DateOfAdd).Take(8),
                 Recipes = _recipeService.GetEntities(SortPredicate: (recipe) => recipe.DateOfAdd).Take(10)
             };
 
@@ -59,7 +59,7 @@ namespace RecipesBook.Controllers
         public IActionResult SearchCategory(string search)
         {
 
-            var filteredCategories = _categoryService.GetEntities((c) => search == null || c.Name.ToLower().Contains(search.ToLower()), SortPredicate: (c) => c.DateOfAdd);
+            var filteredCategories = _categoryService.GetEntities((c) => search == null || (!c.IsHidden && c.Name.ToLower().Contains(search.ToLower())), SortPredicate: (c) => c.DateOfAdd);
             return PartialView("ViewCategories", filteredCategories);
         }
         [HttpGet]
@@ -68,7 +68,7 @@ namespace RecipesBook.Controllers
             SearchCategoryViewModel searchCategoryViewModel = new SearchCategoryViewModel
             {
                 search = null,
-                filteredCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd)
+                filteredCategories = _categoryService.GetEntities((c)=>!c.IsHidden,SortPredicate: c => c.DateOfAdd)
             };
             return View(searchCategoryViewModel);
         }

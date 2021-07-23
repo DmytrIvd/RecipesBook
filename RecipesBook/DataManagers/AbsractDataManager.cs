@@ -61,12 +61,16 @@ namespace RecipesBook.DataManagers
 
         public virtual IList<T> GetEntities<Parameter>(Func<T, bool> predicate, bool loadReferences = false, Func<T, Parameter> SortPredicate = null)
         {
-            var entities = Entities.Where(predicate);
-            if (SortPredicate != null)
+            if (predicate != null)
             {
-                entities.OrderByDescending(e => SortPredicate.Invoke(e));
+                var entities = Entities.Where(predicate);
+                if (SortPredicate != null)
+                {
+                    entities.OrderByDescending(e => SortPredicate.Invoke(e));
+                }
+                return entities.ToList();
             }
-            return entities.ToList();
+            return null;
         }
 
         public virtual IList<T> GetEntities<Parameter>(bool loadReferences = false, Func<T, Parameter> SortPredicate = null)

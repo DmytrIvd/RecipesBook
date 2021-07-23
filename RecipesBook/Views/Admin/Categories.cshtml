@@ -1,0 +1,93 @@
+﻿@model IEnumerable<RecipesBook.Models.Entities.Category>
+@{
+    ViewData["Title"] = "Admin categories";
+}
+<div class="alert alert-danger alert-dismissible fade hide" role="alert">
+    Something wrong, cannot change those property
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsHidden)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfAdd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MainImage)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="row-itemId-@item.Id">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => item.IsHidden)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfAdd)
+                </td>
+                <td>
+                    <img height="50" width="50" src="data:image/png;base64, @Convert.ToBase64String(item.MainImage,Base64FormattingOptions.None)">
+                </td>
+                <td>
+                    <a asp-action="DeleteCategory" asp-controller="Category" asp-route-id="@item.ID" target="_blank" class="btn btn-danger">Delete</a>
+                    <a asp-action="EditCategory" asp-controller="Category" asp-route-id="@item.ID" target="_blank" class="btn btn-warning">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("input[type='checkbox']").change(function () {
+                let id = $(this).closest('tr')[0].getAttribute("id").split('row-itemId-')[1];
+                let isHidden = this.checked;
+                $.post({
+                    url:'@Url.Action("SetHidden")',
+                    data: { id: id, isHidden: isHidden }
+
+                }).done(function (data, statusText, xhr) {
+                    if (xhr.status != '200') {
+
+                        $('#row-itemId-' + id).find("input[type='checkbox']").prop('checked', !isHidden)
+                        if ($(".alert").hasClass("hide")) {
+                            $(".alert").removeClass("hide");
+                            $(".alert").addClass("show");
+                        }
+                    }
+
+
+                });
+            })
+        })
+    </script>
+}

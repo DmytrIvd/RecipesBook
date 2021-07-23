@@ -37,12 +37,6 @@ namespace RecipesBook.DataManagers
 
             return category;
         }
-        public override IList<Category> GetEntities<Parameter>(Func<Category, bool> predicate, bool loadReferences = false, Func<Category, Parameter> SortPredicate = null)
-        {
-            var category = base.GetEntities(predicate, loadReferences, SortPredicate);
-
-            return category;
-        }
 
         protected override void Seed()
         {
@@ -60,6 +54,7 @@ namespace RecipesBook.DataManagers
             Entities.Add(new Category()
             {
                 Id = "1",
+                IsHidden = false,
                 Name = "Супи",
                 Description = "description1",
                 DateOfAdd = DateTime.Now,
@@ -69,6 +64,7 @@ namespace RecipesBook.DataManagers
             Entities.Add(new Category()
             {
                 Id = "2",
+                IsHidden = false,
                 Name = "Каші",
                 Description = "description2",
                 DateOfAdd = DateTime.Now,
@@ -78,6 +74,7 @@ namespace RecipesBook.DataManagers
             Entities.Add(new Category()
             {
                 Id = "3",
+                IsHidden = false,
                 Name = "Салати",
                 Description = "description3",
                 DateOfAdd = DateTime.Now,
@@ -87,6 +84,7 @@ namespace RecipesBook.DataManagers
             Entities.Add(new Category()
             {
                 Id = "4",
+                IsHidden = false,
                 Name = "Рецепти за 15 хвилин",
                 Description = "description4",
                 DateOfAdd = new DateTime(2020, 3, 21),
@@ -96,6 +94,7 @@ namespace RecipesBook.DataManagers
             Entities.Add(new Category()
             {
                 Id = "5",
+                IsHidden = true,
                 Name = "Мясо",
                 Description = "description5",
                 DateOfAdd = DateTime.Now,

@@ -33,20 +33,24 @@ namespace RecipesBook.Controllers
         public IActionResult ViewCategory([FromRoute] string category)
         {
             var cat = _categoryService.Get(category, loadReferences: true);
-
-            if (cat == null)
+            //Category is exists and not hidden
+            if (cat != null && !cat.IsHidden)
             {
-                Response.StatusCode = 404;
-                return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
+
+                //var img= Convert.ToBase64String(cat.MainImage);
+                for (int i = 0; i < cat.Recipes.Length; i++)
+                {
+                    cat.Recipes[i] = _recipeService.Get(cat.Recipes[i].ID);
+                }
+                return View(cat);
 
             }
-            //var img= Convert.ToBase64String(cat.MainImage);
-            for (int i = 0; i < cat.Recipes.Length; i++)
-            {
-                cat.Recipes[i] = _recipeService.Get(cat.Recipes[i].ID);
-            }
-            return View(cat);
+
+
+            Response.StatusCode = 404;
+            return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
         }
+        //To do: Add auth check
         #region Create category
         [HttpPost]
         [Route("createCategory")]
@@ -77,7 +81,8 @@ namespace RecipesBook.Controllers
                     Recipes = new Recipe[0],
                     Name = categoryView.Name,
                     Description = categoryView.Description,
-                    MainImage = Convert.FromBase64String(categoryView.RealImage)
+                    MainImage = Convert.FromBase64String(categoryView.RealImage),
+                    IsHidden = false
                 };
 
 
@@ -94,6 +99,7 @@ namespace RecipesBook.Controllers
             return View();
         }
         #endregion
+        //To do: Add auth check
         #region Edit category
         [HttpPost]
         [Route("editCategory/{id}")]
@@ -119,12 +125,16 @@ namespace RecipesBook.Controllers
                     Description = categoryView.Description,
                     DateOfAdd = original.DateOfAdd,
                     Recipes = original.Recipes,
-                    MainImage = Convert.FromBase64String(categoryView.RealImage)
+                    MainImage = Convert.FromBase64String(categoryView.RealImage),
+                    IsHidden = original.IsHidden
 
                 };
 
                 if (_categoryService.Edit(id, editedCategory))
                 {
+                    //Editor is admin
+                    if (editedCategory.IsHidden)
+                        return Redirect($"/admin/categories");
                     return Redirect($"/category/{id}");
                 }
                 ModelState.AddModelError("", "Cannot save changes, try again later");
@@ -140,13 +150,15 @@ namespace RecipesBook.Controllers
         {
 
             var cat = _categoryService.Get(category);
-
+            //To do check if user is logged and if 
+            // category is hidden show hidden category only if a user is admin
             if (cat == null)
             {
                 Response.StatusCode = 404;
                 return View("Error", new ErrorViewModel() { Message = "It seems this category does not exist (yet or already)" });
 
             }
+
             CategoryAddEditViewModel categoryAddEditViewModel = new CategoryAddEditViewModel()
             {
                 Id = cat.Id,
@@ -155,8 +167,11 @@ namespace RecipesBook.Controllers
                 RealImage = Convert.ToBase64String(cat.MainImage)
             };
             return View(categoryAddEditViewModel);
+
+
         }
         #endregion
+        //To do: Add auth check
         #region delete category
         [Route("deleteCategory/{category}")]
         public IActionResult DeleteCategory(string category)

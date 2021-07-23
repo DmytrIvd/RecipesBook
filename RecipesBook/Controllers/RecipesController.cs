@@ -40,7 +40,7 @@ namespace RecipesBook.Controllers
                rec
                 );
         }
-
+        //To do: Add auth check
         [Route("createStep")]
         [HttpGet]
         public IActionResult CreateStep()
@@ -48,6 +48,7 @@ namespace RecipesBook.Controllers
 
             return PartialView("EditorTemplates/_stepEdit", new StepAddEditViewModel());
         }
+        //To do: Add auth check
         [Route("deleteStep/{step}")]
         public IActionResult DeleteStep(string step)
         {
@@ -58,6 +59,7 @@ namespace RecipesBook.Controllers
             Response.StatusCode = 404;
             return Ok();
         }
+        //To do: Add auth check
         #region Upload recipe
         private string loadBase64(IFormFile fromFile)
         {
@@ -183,6 +185,7 @@ namespace RecipesBook.Controllers
             return View(recipeAddEditViewModel);
         }
         #endregion
+        //To do: Add auth check
         #region Edit recipe
         [Route("editRecipe/{recipe}")]
         [HttpGet]
@@ -194,7 +197,7 @@ namespace RecipesBook.Controllers
                 RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
                 {
                     Id = rec.Id,
-                    AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
+                    AllCategories = _categoryService.GetEntities( SortPredicate: c => c.DateOfAdd),
                     SelectedCategories = rec.Categories.Select(c => c.Id).ToArray(),
                     Description = rec.Description,
                     Name = rec.Name,
@@ -318,6 +321,7 @@ namespace RecipesBook.Controllers
             return View(recipeAddEditViewModel);
         }
         #endregion
+        //To do: Add auth check
         [Route("deleteRecipe/{recipe}")]
         public IActionResult DeleteRecipe(string recipe)
         {

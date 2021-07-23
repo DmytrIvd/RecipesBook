@@ -12,7 +12,7 @@ namespace RecipesBook.Models.Entities
         [JsonIgnore]
         public string ID { get { return Id; } }
 
-
+        public bool IsHidden { get; set; }
 
         public string Name { get; set; }
 

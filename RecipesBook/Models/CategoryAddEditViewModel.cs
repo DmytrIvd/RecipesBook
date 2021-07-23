@@ -28,6 +28,6 @@ namespace RecipesBook.Models
 
        
         public string RealImage { get; set; }
-
+       
     }
 }

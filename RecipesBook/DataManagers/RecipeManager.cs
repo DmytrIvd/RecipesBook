@@ -25,6 +25,7 @@ namespace RecipesBook.DataManagers
             {
                 for (int i = 0; i < recipe.Categories.Length; i++)
                 {
+                    
                     recipe.Categories[i] = _categoryService.Get(recipe.Categories[i].ID);
                     
                 }
