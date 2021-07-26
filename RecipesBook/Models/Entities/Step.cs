@@ -16,7 +16,7 @@ namespace RecipesBook.Models.Entities
         public string Text { get; set; }
         [Required(ErrorMessage = "Select image please")]
         public byte[] Img { get; set; }
-        public Recipe Recipe { get; set; }
+        public virtual Recipe Recipe { get; set; }
         public override bool Equals(object obj)
         {
             return obj is Step step &&

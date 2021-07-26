@@ -14,25 +14,24 @@ namespace RecipesBook.Models.Entities
         [JsonIgnore]
         public string ID { get { return Id; } }
 
-         public string Name { get; set; }
+        public string Name { get; set; }
 
 
-         public string Description { get; set; }
+        public string Description { get; set; }
 
-        [DisplayName("Date of adding the recipe")]
         public DateTime DateOfAdd { get; set; }
 
-         public string[] Ingredients { get; set; }
+        public string[] Ingredients { get; set; }
 
         public byte[] MainImage { get; set; }
 
-       public Step[] Steps { get; set; }
+        public virtual ICollection<Step> Steps { get; set; }
 
-       public Category[] Categories { get; set; }
+        public virtual ICollection<CategoryRecipe> Categories { get; set; }
 
         public User Author { get; set; }
 
-        public User[] UsersThatLiked { get; set; }
+        public virtual ICollection<RecipeUser> UsersThatLiked { get; set; }
 
         public override bool Equals(object obj)
         {

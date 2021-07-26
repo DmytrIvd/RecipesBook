@@ -124,43 +124,20 @@ namespace RecipesBook.Controllers
             if (ModelState.IsValid)
             {
 
-
-                var id = int.Parse(_recipeService.GetEntities(SortPredicate: c => c.Id).First().Id) + 1;
-                int stepId = int.Parse(_stepService.GetEntities(SortPredicate: s => s.Id).First().Id) + 1;
-                string[] stepsIds = new string[recipeAddEditViewModel.Steps.Length];
-                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
-                {
-                    Step entity = new Step
-                    {
-                        Id = stepId.ToString(),
-                        Text = recipeAddEditViewModel.Steps[i].Text,
-                        Img = Convert.FromBase64String(recipeAddEditViewModel.Steps[i].RealImg),
-                        Recipe = new Recipe { Id = id.ToString() },
-
-                    };
-                    stepsIds[i] = entity.Id;
-                    _stepService.Create(entity);
-                    stepId++;
-
-                }
                 Recipe recipe = new Recipe
                 {
-                    Id = id.ToString(),
                     Name = recipeAddEditViewModel.Name,
-                    Categories = tags.ToArray(),
+
                     DateOfAdd = DateTime.Now,
                     Description = recipeAddEditViewModel.Description,
                     Ingredients = recipeAddEditViewModel.Ingredients,
                     MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
-                    Steps = stepsIds.Select(id => new Step { Id = id }).ToArray()
+                    Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
 
                 };
-                foreach (var category in recipe.Categories)
-                {
-                    category.Recipes = category.Recipes.Append(new Recipe { Id = recipe.Id }).ToArray();
-                    _categoryService.Edit(category.Id, category);
-                }
-                //add steps
+                recipe.Categories = tags.Select(
+                    c => new CategoryRecipe { Recipe = recipe, Category = c }
+                    ).ToArray();
                 _recipeService.Create(recipe);
 
                 return Redirect($"/recipes/{recipe.ID}");
@@ -197,8 +174,8 @@ namespace RecipesBook.Controllers
                 RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
                 {
                     Id = rec.Id,
-                    AllCategories = _categoryService.GetEntities( SortPredicate: c => c.DateOfAdd),
-                    SelectedCategories = rec.Categories.Select(c => c.Id).ToArray(),
+                    AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
+                    SelectedCategories = rec.Categories.Select(c => c.CategoryId).ToArray(),
                     Description = rec.Description,
                     Name = rec.Name,
                     Ingredients = rec.Ingredients,
@@ -268,51 +245,24 @@ namespace RecipesBook.Controllers
             if (ModelState.IsValid)
             {
 
-                int stepId = int.Parse(_stepService.GetEntities(SortPredicate: s => s.Id).First().Id) + 1;
-                string[] stepsIds = new string[recipeAddEditViewModel.Steps.Length];
-                for (int i = 0; i < recipeAddEditViewModel.Steps.Length; i++)
-                {
-                    Step entity = new Step
-                    {
-
-                        Text = recipeAddEditViewModel.Steps[i].Text,
-                        Img = Convert.FromBase64String(recipeAddEditViewModel.Steps[i].RealImg),
-                        Recipe = new Recipe { Id = recipe },
-
-                    };
-                    if (recipeAddEditViewModel.Steps[i].Id == null)
-                    {
-                        entity.Id = stepId.ToString();
-                        stepsIds[i] = entity.Id;
-                        _stepService.Create(entity);
-                        stepId++;
-                        break;
-                    }
-
-                    entity.Id = recipeAddEditViewModel.Steps[i].Id;
-                    stepsIds[i] = entity.Id;
-                    _stepService.Edit(entity.Id, entity);
-                }
+              
+             
                 Recipe editedRecipe = new Recipe
                 {
                     Id = recipeAddEditViewModel.Id,
                     Name = recipeAddEditViewModel.Name,
-                    Categories = tags.ToArray(),
+                   
                     DateOfAdd = DateTime.Now,
                     Description = recipeAddEditViewModel.Description,
                     Ingredients = recipeAddEditViewModel.Ingredients,
                     MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
-                    Steps = stepsIds.Select(id => new Step { Id = id }).ToArray()
+                    Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
 
                 };
-                foreach (var category in editedRecipe.Categories)
-                {
-                    if (!category.Recipes.Any(r => r.Id == editedRecipe.Id))
-                    {
-                        category.Recipes = category.Recipes.Append(new Recipe { Id = editedRecipe.Id }).ToArray();
-                        _categoryService.Edit(category.Id, category);
-                    }
-                }
+                editedRecipe.Categories = tags.Select(
+                   c => new CategoryRecipe { Recipe = editedRecipe, Category = c }
+                   ).ToArray();
+               
                 //add steps
                 _recipeService.Edit(editedRecipe.Id, editedRecipe);
                 return Redirect($"/recipes/{recipe}");

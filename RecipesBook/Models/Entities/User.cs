@@ -12,7 +12,7 @@ namespace RecipesBook.Models.Entities
         //public byte[] Avatar { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public Recipe[] LikedRecipes { get; set; }
+        public ICollection<RecipeUser> LikedRecipes { get; set; }
 
         [JsonIgnore]
         public string ID { get { return Email; } }

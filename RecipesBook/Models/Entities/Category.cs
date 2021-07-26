@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace RecipesBook.Models.Entities
@@ -20,11 +22,10 @@ namespace RecipesBook.Models.Entities
 
         public string Description { get; set; }
 
-        [DisplayName("Date of adding the category")]
         public DateTime DateOfAdd { get; set; }
 
         public byte[] MainImage { get; set; }
-        public Recipe[] Recipes { get; set; }
+        public virtual ICollection<CategoryRecipe> Recipes { get; set; }
 
         public override bool Equals(object obj)
         {

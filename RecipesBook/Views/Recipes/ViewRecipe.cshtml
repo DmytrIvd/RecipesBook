@@ -14,12 +14,12 @@
 
 <h5>Categories:</h5>
 <div id="categories" class="my-3">
-    @for (int i = 0; i < Model.Categories.Length; i++)
+    @for (int i = 0; i < Model.Categories.Count; i++)
     {
-        if (Model.Categories[i] != null && !Model.Categories[i].IsHidden)
+        if (Model.Categories.ElementAt(i) != null && !Model.Categories.ElementAt(i).Category.IsHidden)
         {
-            <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories[i].Id">
-                @Model.Categories[i].Name
+            <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories.ElementAt(i).Category.Id">
+                @Model.Categories.ElementAt(i).Category.Name
             </a>
         }
     }
@@ -40,12 +40,12 @@
 <h5>Instruction</h5>
 
 <div id="steps" class="my-2 row">
-    @for (int i = 0; i < Model.Steps.Length; i++)
+    @for (int i = 0; i < Model.Steps.Count; i++)
     {
         <div id="step-@i" class="step col-sm-6 col-md-4 border border-secondary-2 ">
-            <img src="data:image/png;base64, @Convert.ToBase64String(Model.Steps[i].Img,Base64FormattingOptions.None)" height="400" width="400" class="img-fluid" />
+            <img src="data:image/png;base64, @Convert.ToBase64String(Model.Steps.ElementAt(i).Img,Base64FormattingOptions.None)" height="400" width="400" class="img-fluid" />
 
-            <p>@Model.Steps[i].Text</p>
+            <p>@Model.Steps.ElementAt(i).Text</p>
 
         </div>
         <hr />

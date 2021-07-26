@@ -38,10 +38,7 @@ namespace RecipesBook.Controllers
             {
 
                 //var img= Convert.ToBase64String(cat.MainImage);
-                for (int i = 0; i < cat.Recipes.Length; i++)
-                {
-                    cat.Recipes[i] = _recipeService.Get(cat.Recipes[i].ID);
-                }
+               
                 return View(cat);
 
             }
@@ -78,7 +75,7 @@ namespace RecipesBook.Controllers
                 {
                     Id = id.ToString(),
                     DateOfAdd = DateTime.Now,
-                    Recipes = new Recipe[0],
+                    Recipes = new CategoryRecipe[0],
                     Name = categoryView.Name,
                     Description = categoryView.Description,
                     MainImage = Convert.FromBase64String(categoryView.RealImage),

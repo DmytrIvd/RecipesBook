@@ -89,7 +89,7 @@ namespace RecipesBook.Controllers
                 r.Name.ToLower().Contains(search.ToLower())) &&
                 (selectedCategories.Length == 0
                 ||
-                r.Categories.Any(c => selectedCategories.Contains(c.Id))));
+                r.Categories.Any(c => selectedCategories.Contains(c.CategoryId))));
 
 
             var FilteredRecipes =
