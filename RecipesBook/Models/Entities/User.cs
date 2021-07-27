@@ -12,10 +12,11 @@ namespace RecipesBook.Models.Entities
         //public byte[] Avatar { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public ICollection<RecipeUser> LikedRecipes { get; set; }
-
+        public virtual ICollection<RecipeUser> LikedRecipes { get; set; }
+        public virtual ICollection<Recipe> CreatedRecipes { get; set; }
         [JsonIgnore]
         public string ID { get { return Email; } }
+
 
         public override bool Equals(object obj)
         {

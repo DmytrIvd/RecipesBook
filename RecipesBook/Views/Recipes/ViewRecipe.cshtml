@@ -18,7 +18,7 @@
     {
         if (Model.Categories.ElementAt(i) != null && !Model.Categories.ElementAt(i).Category.IsHidden)
         {
-            <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories.ElementAt(i).Category.Id">
+            <a class="category-link btn btn-outline-primary" href="/category/@Model.Categories.ElementAt(i).CategoryId">
                 @Model.Categories.ElementAt(i).Category.Name
             </a>
         }

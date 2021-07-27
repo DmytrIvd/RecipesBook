@@ -27,16 +27,16 @@ namespace RecipesBook
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("RecipesBook")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RecipesBook")));
 
 
             services.AddControllersWithViews();
-            services.AddSingleton<IDataManager<Step>, StepManager>();
+            services.AddScoped<IDataManager<Step>, StepManager>();
 
-            services.AddSingleton<IDataManager<Recipe>, RecipeManager>();
+            services.AddScoped<IDataManager<Recipe>, RecipeManager>();
 
-            services.AddSingleton<IDataManager<Category>, CategoryManager>();
-            services.AddSingleton<IDataManager<User>, AuthManager>();
+            services.AddScoped<IDataManager<Category>, CategoryManager>();
+            services.AddScoped<IDataManager<User>, AuthManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

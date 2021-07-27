@@ -1,4 +1,6 @@
-﻿using RecipesBook.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipesBook.DAL;
+using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,99 +10,122 @@ namespace RecipesBook.DataManagers
 {
     public class CategoryManager : AbsractDataManager<Category>
     {
-
-        public CategoryManager()
+        public CategoryManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-
         }
 
-        public override Category Get(object key, bool loadReferences = false)
+        public override void Create(Category entity)
         {
-            if (key != null)
+            if (entity != null)
             {
-                var category = base.Get(key, loadReferences);
+                DbContext.Categories.Add(entity);
+                DbContext.SaveChanges();
+            }
+        }
 
-                return category;
+        public override bool Delete(object key)
+        {
+            try
+            {
+                if (key != null)
+                {
+                    var entity = DbContext.Categories.Where(c => c.Id == key.ToString()).SingleOrDefault();
+                    if (entity != null)
+                    {
+                        DbContext.Categories.Remove(entity);
+                        DbContext.SaveChanges();
+                        return true;
+                    }
+                }
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            return false;
+        }
+
+        public override bool Edit(object key, Category editedEntity)
+        {
+            try
+            {
+                var entity = Get(key);
+                entity.IsHidden = editedEntity.IsHidden;
+                entity.Description = editedEntity.Description;
+                entity.MainImage = editedEntity.MainImage;
+                entity.Name = editedEntity.Name;
+
+                entity.Recipes = editedEntity.Recipes;
+
+                DbContext.SaveChanges();
+                return true;
+
+            }
+            catch (DbUpdateException upd)
+            {
+                return false;
+            }
+        }
+
+        public override Category Get(Func<Category, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                return DbContext.Categories.AsNoTracking().SingleOrDefault(predicate);
             }
             return null;
         }
-        public override Category Get(Func<Category, bool> predicate, bool loadReferences = false)
-        {
-            var category = base.Get(predicate, loadReferences);
 
-            return category;
+        public override Category Get(object key)
+        {
+            if (key != null)
+            {
+                return DbContext.Categories.AsNoTracking().Include(c => c.Recipes).ThenInclude(rc => rc.Recipe).ToList().SingleOrDefault(c => c.Id == key.ToString());
+            }
+            return null;
         }
 
-        public override IList<Category> GetEntities<Parameter>(bool loadReferences = false, Func<Category, Parameter> SortPredicate = null)
+        public override IList<Category> GetEntities<Parameter>(Func<Category, bool> predicate, Func<Category, Parameter> SortPredicate)
         {
-            var category = base.GetEntities(loadReferences, SortPredicate);
-
-            return category;
+            var filtered = DbContext.Categories.AsNoTracking();
+            IEnumerable<Category> filteredCategory;
+            if (predicate != null)
+            {
+                filteredCategory = filtered.Where(predicate);
+            }
+            else
+            {
+                filteredCategory = filtered.ToList();
+            }
+            if (SortPredicate != null)
+            {
+                filteredCategory.OrderBy(SortPredicate);
+            }
+            return filteredCategory.ToList();
         }
 
-        protected override void Seed()
+        public override IList<Category> GetEntities<Parameter>(Func<Category, Parameter> SortPredicate)
         {
-            //string filename = "./wwwroot/images/NotFound.png";
-            //byte[] bytes = null;
-            //using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            //{
-            //    // Create a byte array of file stream length
-            //    bytes = System.IO.File.ReadAllBytes(filename);
-            //    //Read block of bytes from stream into the byte array
-            //    fs.Read(bytes, 0, System.Convert.ToInt32(fs.Length));
-            //    //Close the File Stream
-            //    fs.Close();
-            //}
-            //Entities.Add(new Category()
-            //{
-            //    Id = "1",
-            //    IsHidden = false,
-            //    Name = "Супи",
-            //    Description = "description1",
-            //    DateOfAdd = DateTime.Now,
-            //    MainImage = bytes,
-            //    Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
-            //});
-            //Entities.Add(new Category()
-            //{
-            //    Id = "2",
-            //    IsHidden = false,
-            //    Name = "Каші",
-            //    Description = "description2",
-            //    DateOfAdd = DateTime.Now,
-            //    MainImage = bytes,
-            //    Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
-            //});
-            //Entities.Add(new Category()
-            //{
-            //    Id = "3",
-            //    IsHidden = false,
-            //    Name = "Салати",
-            //    Description = "description3",
-            //    DateOfAdd = DateTime.Now,
-            //    MainImage = bytes,
-            //    Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
-            //});
-            //Entities.Add(new Category()
-            //{
-            //    Id = "4",
-            //    IsHidden = false,
-            //    Name = "Рецепти за 15 хвилин",
-            //    Description = "description4",
-            //    DateOfAdd = new DateTime(2020, 3, 21),
-            //    MainImage = bytes,
-            //    Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
-            //});
-            //Entities.Add(new Category()
-            //{
-            //    Id = "5",
-            //    IsHidden = true,
-            //    Name = "Мясо",
-            //    Description = "description5",
-            //    DateOfAdd = DateTime.Now,
-            //    MainImage = bytes,
-            //    Recipes = new Recipe[] { new Recipe() { Id = "1" }, new Recipe() { Id = "2" }, new Recipe() { Id = "3" }, new Recipe() { Id = "4" }, new Recipe() { Id = "5" } }
-            //});
+            var filtered = DbContext.Categories.AsNoTracking();
+            if (SortPredicate != null)
+            {
+                return filtered.OrderBy(SortPredicate).ToList();
+            }
+            return filtered.ToList();
+        }
+
+        public override IList<Category> GetEntities()
+        {
+            return DbContext.Categories.AsNoTracking().ToList();
+        }
+
+        public override IList<Category> GetEntities(Func<Category, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                return DbContext.Categories.AsNoTracking().Where(predicate).ToList();
+            }
+            return DbContext.Categories.AsNoTracking().ToList();
         }
     }
 }

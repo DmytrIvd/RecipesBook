@@ -30,7 +30,7 @@ namespace RecipesBook.Controllers
         [Route("recipes/{recipe}")]
         public IActionResult ViewRecipe([FromRoute] string recipe)
         {
-            var rec = _recipeService.Get(recipe, loadReferences: true);
+            var rec = _recipeService.Get(recipe);
             if (rec == null)
             {
                 Response.StatusCode = 404;
@@ -135,9 +135,7 @@ namespace RecipesBook.Controllers
                     Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
 
                 };
-                recipe.Categories = tags.Select(
-                    c => new CategoryRecipe { Recipe = recipe, Category = c }
-                    ).ToArray();
+                recipe.Categories = tags.Select(t => new CategoryRecipe { Category = t, Recipe = recipe }).ToArray();
                 _recipeService.Create(recipe);
 
                 return Redirect($"/recipes/{recipe.ID}");
@@ -168,14 +166,14 @@ namespace RecipesBook.Controllers
         [HttpGet]
         public IActionResult EditRecipe(string recipe)
         {
-            var rec = _recipeService.Get(recipe, true);
+            var rec = _recipeService.Get(recipe);
             if (rec != null)
             {
                 RecipeAddEditViewModel recipeAddEditViewModel = new RecipeAddEditViewModel
                 {
                     Id = rec.Id,
                     AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd),
-                    SelectedCategories = rec.Categories.Select(c => c.CategoryId).ToArray(),
+                    SelectedCategories = rec.Categories.Select(cr => cr.CategoryId).ToArray(),
                     Description = rec.Description,
                     Name = rec.Name,
                     Ingredients = rec.Ingredients,
@@ -245,13 +243,13 @@ namespace RecipesBook.Controllers
             if (ModelState.IsValid)
             {
 
-              
-             
+
+
                 Recipe editedRecipe = new Recipe
                 {
                     Id = recipeAddEditViewModel.Id,
                     Name = recipeAddEditViewModel.Name,
-                   
+
                     DateOfAdd = DateTime.Now,
                     Description = recipeAddEditViewModel.Description,
                     Ingredients = recipeAddEditViewModel.Ingredients,
@@ -259,10 +257,7 @@ namespace RecipesBook.Controllers
                     Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
 
                 };
-                editedRecipe.Categories = tags.Select(
-                   c => new CategoryRecipe { Recipe = editedRecipe, Category = c }
-                   ).ToArray();
-               
+                editedRecipe.Categories = tags.Select(t => new CategoryRecipe { Category = t, Recipe = editedRecipe }).ToArray();
                 //add steps
                 _recipeService.Edit(editedRecipe.Id, editedRecipe);
                 return Redirect($"/recipes/{recipe}");

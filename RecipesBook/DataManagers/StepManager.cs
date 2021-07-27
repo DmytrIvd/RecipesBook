@@ -1,4 +1,5 @@
-﻿using RecipesBook.Models.Entities;
+﻿using RecipesBook.DAL;
+using RecipesBook.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,28 +8,53 @@ namespace RecipesBook.DataManagers
 {
     public class StepManager : AbsractDataManager<Step>
     {
-        protected override void Seed()
+        public StepManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            string filename = "./wwwroot/images/NotFound.png";
-            byte[] bytes = null;
-            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            {
-                // Create a byte array of file stream length
-                bytes = System.IO.File.ReadAllBytes(filename);
-                //Read block of bytes from stream into the byte array
-                fs.Read(bytes, 0, System.Convert.ToInt32(fs.Length));
-                //Close the File Stream
-                fs.Close();
-            }
-            Entities.Add(new Step() { Id = "1", Text = "Do this fisrt", Img = bytes });
-            Entities.Add(new Step() { Id = "2", Text = "Do this secound", Img = bytes });
-            Entities.Add(new Step() { Id = "3", Text = "Do this third", Img = bytes });
-            Entities.Add(new Step() { Id = "4", Text = "Do this fourth", Img = bytes });
-            Entities.Add(new Step() { Id = "5", Text = "Do this fifth", Img = bytes });
-            Entities.Add(new Step() { Id = "6", Text = "Do this sixth", Img = bytes });
-            Entities.Add(new Step() { Id = "7", Text = "Do this seventh", Img = bytes });
-            Entities.Add(new Step() { Id = "8", Text = "Do this eighth", Img = bytes });
+        }
 
+        public override void Create(Step entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Delete(object key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool Edit(object key, Step editedEntity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Step Get(Func<Step, bool> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Step Get(object key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<Step> GetEntities<Parameter>(Func<Step, bool> predicate, Func<Step, Parameter> SortPredicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<Step> GetEntities<Parameter>(Func<Step, Parameter> SortPredicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<Step> GetEntities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<Step> GetEntities(Func<Step, bool> predicate)
+        {
+            throw new NotImplementedException();
         }
     }
 }

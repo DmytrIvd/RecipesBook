@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -21,8 +22,22 @@ namespace RecipesBook.Models.Entities
 
         public DateTime DateOfAdd { get; set; }
 
-        public string[] Ingredients { get; set; }
-
+        public string[] Ingredients
+        {
+            get { return this.StringIngredients.Split('}'); }
+            set
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var i in value)
+                {
+                    stringBuilder.Append(i);
+                    stringBuilder.Append('}');
+                }
+                stringBuilder.Remove(stringBuilder.Length - 1, 1);
+                this.StringIngredients = stringBuilder.ToString();
+            }
+        }
+        public string StringIngredients { get; set; }
         public byte[] MainImage { get; set; }
 
         public virtual ICollection<Step> Steps { get; set; }

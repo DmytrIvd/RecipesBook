@@ -32,7 +32,7 @@ namespace RecipesBook.Controllers
         [Route("category/{category}")]
         public IActionResult ViewCategory([FromRoute] string category)
         {
-            var cat = _categoryService.Get(category, loadReferences: true);
+            var cat = _categoryService.Get(category);
             //Category is exists and not hidden
             if (cat != null && !cat.IsHidden)
             {
@@ -68,12 +68,12 @@ namespace RecipesBook.Controllers
             if (ModelState.IsValid)
             {
 
-                //Just stupid
-                var id = int.Parse(_categoryService.GetEntities(SortPredicate: c => c.Id).First().Id) + 1;
+                
+               
 
                 Category category = new Category()
                 {
-                    Id = id.ToString(),
+                    
                     DateOfAdd = DateTime.Now,
                     Recipes = new CategoryRecipe[0],
                     Name = categoryView.Name,

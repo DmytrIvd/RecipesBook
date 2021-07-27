@@ -11,6 +11,7 @@ namespace RecipesBook.Models
     {
         public string Id { get; set; }
         [Required(ErrorMessage ="Enter some text of the step pleasee")]
+        
         public string Text { get; set; }
 
 
