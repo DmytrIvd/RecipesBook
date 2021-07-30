@@ -56,17 +56,67 @@ namespace RecipesBook.DataManagers
         {
             try
             {
-                var entity = Get(key);
+                if (key != null)
+                {
+                    var entity = DbContext.Recipes.
+                        Include(r => r.Steps).
+                        Include(r => r.Categories).
+                        ToList().SingleOrDefault(r => r.Id == key.ToString());
 
-                entity.Description = editedEntity.Description;
-                entity.Ingredients = editedEntity.Ingredients;
+                    entity.Description = editedEntity.Description;
+                    entity.Ingredients = editedEntity.Ingredients;
 
-                entity.Categories = editedEntity.Categories;
-                entity.Steps = editedEntity.Steps;
-                entity.UsersThatLiked = editedEntity.UsersThatLiked;
+                    //entity.Categories = editedEntity.Categories;
+                    var categoriesToDelete = entity.Categories.Where(c => !editedEntity.Categories.Contains(c));
+                    foreach (var cat in categoriesToDelete)
+                    {
+                        entity.Categories
+                            .Remove(cat);
+                    }
 
-                DbContext.SaveChanges();
-                return true;
+                    foreach (var category in editedEntity.Categories)
+                    {
+                        //For a new CategoryRecipes
+                        if (!entity.Categories.Any(rc => rc.Equals(category)))
+                        {
+                            //category.Category= DbContext.Categories.Find(category.Category.Id);
+                            entity.Categories.Add(category);
+
+                        }
+
+
+                    }
+
+
+                    var stepstoDelete = entity.Steps.Where(s => !editedEntity.Steps.Contains(s));
+                    foreach (var step in stepstoDelete)
+                    {
+                        //DbContext.Steps.Remove(step);
+                        entity.Steps.Remove(step);
+                    }
+                    foreach (var editedStep in editedEntity.Steps)
+                    {
+                        if (editedStep.Id != null)
+                        {
+                            var stepToEdit = entity.Steps.First(s => s.Id == editedStep.Id);
+                            if (stepToEdit.Img != editedStep.Img)
+                                stepToEdit.Img = editedStep.Img;
+                            if (stepToEdit.Text != editedStep.Text)
+                                stepToEdit.Text = editedStep.Text;
+
+                        }
+                        else
+                        {
+                            entity.Steps.Add(editedStep);
+                        }
+                    }
+
+                    entity.UsersThatLiked = editedEntity.UsersThatLiked;
+
+                    DbContext.SaveChanges();
+                    return true;
+                }
+                return false;
 
             }
             catch (DbUpdateException upd)

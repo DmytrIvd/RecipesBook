@@ -49,22 +49,27 @@ namespace RecipesBook.DataManagers
         {
             try
             {
-                var entity = Get(key);
-                entity.IsHidden = editedEntity.IsHidden;
-                entity.Description = editedEntity.Description;
-                entity.MainImage = editedEntity.MainImage;
-                entity.Name = editedEntity.Name;
+                if (key != null)
+                {
+                    var entity = DbContext.Categories.FirstOrDefault(c => c.Id == key.ToString());
+                    entity.IsHidden = editedEntity.IsHidden;
+                    entity.Description = editedEntity.Description;
+                    entity.MainImage = editedEntity.MainImage;
+                    entity.Name = editedEntity.Name;
 
-                entity.Recipes = editedEntity.Recipes;
 
-                DbContext.SaveChanges();
-                return true;
+
+                    DbContext.SaveChanges();
+                    return true;
+                }
+                return false;
 
             }
-            catch (DbUpdateException upd)
+            catch (Exception exe)
             {
                 return false;
             }
+
         }
 
         public override Category Get(Func<Category, bool> predicate)

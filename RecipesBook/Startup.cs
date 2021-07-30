@@ -27,7 +27,11 @@ namespace RecipesBook
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RecipesBook")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RecipesBook"),
+                sqlServerOptionsAction: sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure();
+                }));
 
 
             services.AddControllersWithViews();
@@ -61,7 +65,7 @@ namespace RecipesBook
 
             app.UseEndpoints(endpoints =>
             {
-               
+
                 endpoints.MapControllerRoute(
                     name: "recipe",
                     pattern: "recipe/{recipe}",

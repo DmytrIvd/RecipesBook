@@ -254,13 +254,16 @@ namespace RecipesBook.Controllers
                     Description = recipeAddEditViewModel.Description,
                     Ingredients = recipeAddEditViewModel.Ingredients,
                     MainImage = Convert.FromBase64String(recipeAddEditViewModel.RealImage),
-                    Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
+                    Steps = recipeAddEditViewModel.Steps.Select(sAEvm => new Step { Id = sAEvm.Id, Img = Convert.FromBase64String(sAEvm.RealImg), Text = sAEvm.Text }).ToArray()
 
                 };
-                editedRecipe.Categories = tags.Select(t => new CategoryRecipe { Category = t, Recipe = editedRecipe }).ToArray();
+                editedRecipe.Categories = tags.Select(t => new CategoryRecipe { CategoryId = t.Id, RecipeId = editedRecipe.Id }).ToArray();
                 //add steps
-                _recipeService.Edit(editedRecipe.Id, editedRecipe);
-                return Redirect($"/recipes/{recipe}");
+                if (_recipeService.Edit(editedRecipe.Id, editedRecipe))
+                {
+
+                    return Redirect($"/recipes/{recipe}");
+                }
             }
             recipeAddEditViewModel.AllCategories = _categoryService.GetEntities(SortPredicate: c => c.DateOfAdd);
             return View(recipeAddEditViewModel);
