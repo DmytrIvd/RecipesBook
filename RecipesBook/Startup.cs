@@ -66,15 +66,15 @@ namespace RecipesBook
             app.UseEndpoints(endpoints =>
             {
 
-                endpoints.MapControllerRoute(
-                    name: "recipe",
-                    pattern: "recipe/{recipe}",
-                    defaults: new { controller = "Recipe", action = "ViewRecipe" }
-                    );
-                endpoints.MapControllerRoute(
-                    name: "category",
-                    pattern: "category/{category}",
-                    defaults: new { controller = "Category", action = "ViewCategory" });
+                //endpoints.MapControllerRoute(
+                //    name: "recipe",
+                //    pattern: "recipe/{recipe}",
+                //    defaults: new { controller = "Recipe", action = "ViewRecipe" }
+                //    );
+                //endpoints.MapControllerRoute(
+                //    name: "category",
+                //    pattern: "category/{category}",
+                //    defaults: new { controller = "Category", action = "ViewCategory" });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
