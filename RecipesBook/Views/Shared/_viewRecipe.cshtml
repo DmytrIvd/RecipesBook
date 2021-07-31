@@ -1,5 +1,5 @@
 ﻿@model RecipesBook.Models.Entities.Recipe
-<div id="recipe-@Model.Id" class="card col-3 p-3">
+<div id="recipe-@Model.Id" class="card col-md-3 p-3">
 
 
     <img class="card-img-top" height="150" width="150" src="data:image/png;base64, @Convert.ToBase64String(Model.MainImage,Base64FormattingOptions.None)">
